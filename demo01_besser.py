@@ -119,6 +119,9 @@ all_sprites.add(player)
 # Variable to keep the main loop running
 running = True
 
+# Setup the clock for a decent framerate
+clock = pygame.time.Clock()
+
 # Main loop
 while running:
     # for loop through the event queue
@@ -169,3 +172,6 @@ while running:
 
     # Update the display
     pygame.display.flip()
+
+    # Ensure program maintains a rate of 30 frames per second
+    clock.tick(30)
