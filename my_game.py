@@ -58,6 +58,14 @@ while running:
     #Hintergrund weiss machen
     screen.fill((255, 255, 255))
 
+    if rectangle_y > DISPLAY_LENGTH - BLOCK_HIGHT:
+        rectangle_y = DISPLAY_LENGTH - BLOCK_HIGHT
+    #Nach oben braucht es nicht, da es ja nie nach oben geht
+    if rectangle_x > DISPLAY_WIDTH - BLOCK_WIDTH:
+        rectangle_x = DISPLAY_WIDTH - BLOCK_WIDTH
+    if rectangle_x < 0:
+        rectangle_x = 0
+
     #Zeichne ein Rechteck oben in die Mitte
     pygame.draw.rect(screen, (255, 0, 0), [rectangle_x, rectangle_y, BLOCK_WIDTH, BLOCK_HIGHT])
 
