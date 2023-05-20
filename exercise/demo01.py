@@ -1,6 +1,6 @@
 # Example of https://realpython.com/pygame-a-primer/
 
-# Import the pygame module
+# Import the pygame module 
 import pygame
 
 # Import random for random numbers
@@ -144,7 +144,6 @@ while running:
 
     # Ensure program maintains a rate of 30 frames per second
     clock.tick(30)
-
 
 
 
