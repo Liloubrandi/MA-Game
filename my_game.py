@@ -22,15 +22,29 @@ BLOCK_WIDTH = DISPLAY_WIDTH/9
 BLOCK_HIGHT = DISPLAY_LENGTH/13
 screen = pygame.display.set_mode([DISPLAY_WIDTH, DISPLAY_LENGTH])
 
-'''def links_oder_rechts():
-    global rectangle_x #vergessen, hat deshalb zuerst Fehlemeldung gegeben
+'''
+def links_oder_rechts():
+    global rectangle_x
     for event in pygame.event.get():
         if event.type == KEYDOWN:
             if event.key == K_RIGHT:
                 rectangle_x = rectangle_x + BLOCK_WIDTH
             if event.key == K_LEFT:
+                rectangle_x = rectangle_x - BLOCK_WIDTH'''
+
+def check_events():
+    #Hat der Spieler die Escapetaste gedrückt oder das Fenster geschlossen? 
+    for event in pygame.event.get():
+        global rectangle_x, running
+        if event.type == QUIT:
+            running = False
+        if event.type == KEYDOWN:
+            if event.key == K_ESCAPE:
+                running = False
+            if event.key == K_RIGHT:
+                rectangle_x = rectangle_x + BLOCK_WIDTH
+            if event.key == K_LEFT:
                 rectangle_x = rectangle_x - BLOCK_WIDTH
-    return rectangle_x'''
 
 #While-Schlaufe - machen bis running = False
 running = True
@@ -38,7 +52,9 @@ rectangle_y = 0
 rectangle_x = 0 + 4 * BLOCK_WIDTH
 while running:
 
-    #Hat der Spieler die Escapetaste gedrückt oder das Fenster geschlossen? 
+    check_events()
+
+    '''#Hat der Spieler die Escapetaste gedrückt oder das Fenster geschlossen? 
     for event in pygame.event.get():
         if event.type == QUIT:
             running = False
@@ -49,7 +65,7 @@ while running:
             if event.key == K_RIGHT:
                 rectangle_x = rectangle_x + BLOCK_WIDTH
             if event.key == K_LEFT:
-                rectangle_x = rectangle_x - BLOCK_WIDTH
+                rectangle_x = rectangle_x - BLOCK_WIDTH'''
 
     rectangle_y = rectangle_y + 0.01
     #Überprüfe, ob sich der Block verschieben soll
