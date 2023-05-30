@@ -46,11 +46,11 @@ def check_events():
             if event.key == K_LEFT:
                 rectangle_x = rectangle_x - BLOCK_WIDTH
         elif event.type == MOVEBLOCK:
-            rectangle_y == rectangle_y + BLOCK_HIGHT
+            rectangle_y = rectangle_y + BLOCK_HIGHT
 
 #Kreiere ein eigenes Event, welches jede Sekunde ausgeführt wird -> um den Block nach unten zu bewegen
 MOVEBLOCK = pygame.USEREVENT + 1
-pygame.time.set_timer(MOVEBLOCK, 200)
+pygame.time.set_timer(MOVEBLOCK, 1000)
 
 #While-Schlaufe - machen bis running = False
 running = True
