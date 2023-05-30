@@ -35,16 +35,22 @@ def links_oder_rechts():
 def check_events():
     #Hat der Spieler die Escapetaste gedrückt oder das Fenster geschlossen? 
     for event in pygame.event.get():
-        global rectangle_x, running
+        global rectangle_x, running, rectangle_y
         if event.type == QUIT:
             running = False
-        if event.type == KEYDOWN:
+        elif event.type == KEYDOWN:
             if event.key == K_ESCAPE:
                 running = False
             if event.key == K_RIGHT:
                 rectangle_x = rectangle_x + BLOCK_WIDTH
             if event.key == K_LEFT:
                 rectangle_x = rectangle_x - BLOCK_WIDTH
+        elif event.type == MOVEBLOCK:
+            rectangle_y == rectangle_y + BLOCK_HIGHT
+
+#Kreiere ein eigenes Event, welches jede Sekunde ausgeführt wird -> um den Block nach unten zu bewegen
+MOVEBLOCK = pygame.USEREVENT + 1
+pygame.time.set_timer(MOVEBLOCK, 200)
 
 #While-Schlaufe - machen bis running = False
 running = True
@@ -67,9 +73,7 @@ while running:
             if event.key == K_LEFT:
                 rectangle_x = rectangle_x - BLOCK_WIDTH'''
 
-    rectangle_y = rectangle_y + 0.01
-    #Überprüfe, ob sich der Block verschieben soll
-    #rectangle_x = links_oder_rechts()
+    #rectangle_y = rectangle_y + 0.01
 
     #Hintergrund weiss machen
     screen.fill((255, 255, 255))
