@@ -45,21 +45,17 @@ def check_events():
         elif event.type == MOVEBLOCK:
             rectangle_y = rectangle_y + BLOCK_HEIGHT
 
-'''class Block(pygame.sprite.Sprite):
-    def __init__(self, width, height):
+class Block(pygame.sprite.Sprite):
+    def __init__(self, width, height, x, y):
         super().__init__()
         self.image = pygame.Surface((width, height))
         self.image.fill((255, 0, 0))
         self.rect = self.image.get_rect()
-
-block = Block(BLOCK_WIDTH, BLOCK_HEIGHT)
-
-block_group = pygame.sprite.Group()
-block_group.add(block)'''
+        self.rect = (x, y)
 
 #Kreiere ein eigenes Event, welches jede Sekunde ausgeführt wird -> um den Block nach unten zu bewegen
 MOVEBLOCK = pygame.USEREVENT + 1
-pygame.time.set_timer(MOVEBLOCK, 500)
+pygame.time.set_timer(MOVEBLOCK, 1000)
 
 #While-Schlaufe - machen bis running = False
 while running:
@@ -78,12 +74,18 @@ while running:
         rectangle_x = 0
 
     #Zeichne ein Rechteck oben in die Mitte
-    pygame.draw.rect(screen, (255, 0, 0), [rectangle_x, rectangle_y, BLOCK_WIDTH, BLOCK_HEIGHT])
+    #pygame.draw.rect(screen, (255, 0, 0), [rectangle_x, rectangle_y, BLOCK_WIDTH, BLOCK_HEIGHT])
+    block = Block(BLOCK_WIDTH, BLOCK_HEIGHT, rectangle_x, rectangle_y)
 
+    block_group = pygame.sprite.Group()
+    block_group.add(block)
+
+    '''for block in block_group:
+        screen.blit(block.surf, block.rect)'''
+    
+    block_group.draw(screen)
     # Flip the display - aktualisieren
     pygame.display.flip()
-
-    #block_group.draw(screen)
 
 #ganz am Ende
 pygame.quit()
