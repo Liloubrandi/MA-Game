@@ -26,6 +26,7 @@ screen = pygame.display.set_mode([DISPLAY_WIDTH, DISPLAY_LENGTH])
 running = True
 rectangle_y = 0
 rectangle_x = 0 + 4 * BLOCK_WIDTH
+fest_x = -BLOCK_WIDTH
 
 def check_events():
     #Hat der Spieler die Escapetaste gedrückt oder das Fenster geschlossen? 
@@ -55,7 +56,7 @@ class Block(pygame.sprite.Sprite):
 
 #Kreiere ein eigenes Event, welches jede Sekunde ausgeführt wird -> um den Block nach unten zu bewegen
 MOVEBLOCK = pygame.USEREVENT + 1
-pygame.time.set_timer(MOVEBLOCK, 1000)
+pygame.time.set_timer(MOVEBLOCK, 500)
 
 #While-Schlaufe - machen bis running = False
 while running:
@@ -66,7 +67,9 @@ while running:
     screen.fill((255, 255, 255))
 
     if rectangle_y > DISPLAY_LENGTH - BLOCK_HEIGHT:
-        rectangle_y = DISPLAY_LENGTH - BLOCK_HEIGHT
+        fest_x = rectangle_x
+        rectangle_x = 0 + 4 * BLOCK_WIDTH
+        rectangle_y = 0
     #Nach oben braucht es nicht, da es ja nie nach oben geht
     if rectangle_x > DISPLAY_WIDTH - BLOCK_WIDTH:
         rectangle_x = DISPLAY_WIDTH - BLOCK_WIDTH
@@ -76,14 +79,16 @@ while running:
     #Zeichne ein Rechteck oben in die Mitte
     #pygame.draw.rect(screen, (255, 0, 0), [rectangle_x, rectangle_y, BLOCK_WIDTH, BLOCK_HEIGHT])
     block = Block(BLOCK_WIDTH, BLOCK_HEIGHT, rectangle_x, rectangle_y)
+    block_2 = Block(BLOCK_WIDTH, BLOCK_HEIGHT, fest_x, DISPLAY_LENGTH - BLOCK_HEIGHT)
 
     block_group = pygame.sprite.Group()
     block_group.add(block)
+    block_group.add(block_2)
 
-    '''for block in block_group:
-        screen.blit(block.surf, block.rect)'''
+    for block in block_group:
+        screen.blit(block.image, block.rect)
     
-    block_group.draw(screen)
+    #block_group.draw(screen)
     # Flip the display - aktualisieren
     pygame.display.flip()
 
