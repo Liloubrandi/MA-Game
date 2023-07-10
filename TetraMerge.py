@@ -27,11 +27,29 @@ running = True
 rectangle_y = 0
 rectangle_x = 0 + 4 * BLOCK_WIDTH
 fest_x = -BLOCK_WIDTH
+list_y = rectangle_x / BLOCK_WIDTH
+list_x = rectangle_y / BLOCK_HEIGHT
 
-def check_events(events, block):
+board = [
+    [], [], [], [], [], [], [], [], [],
+    [], [], [], [], [], [], [], [], [], 
+    [], [], [], [], [], [], [], [], [], 
+    [], [], [], [], [], [], [], [], [], 
+    [], [], [], [], [], [], [], [], [], 
+    [], [], [], [], [], [], [], [], [], 
+    [], [], [], [], [], [], [], [], [], 
+    [], [], [], [], [], [], [], [], [], 
+    [], [], [], [], [], [], [], [], [], 
+    [], [], [], [], [], [], [], [], [], 
+    [], [], [], [], [], [], [], [], [], 
+    [], [], [], [], [], [], [], [], [], 
+    [], [], [], [], [], [], [], [], []
+]
+
+'''def check_events(events, block):
     #Hat der Spieler die Escapetaste gedrückt oder das Fenster geschlossen? 
     for event in pygame.event.get():
-        global rectangle_x, running, rectangle_y
+        global rectangle_x, running, rectangle_y, list_x, list_y
         if event.type == QUIT:
             running = False
         elif event.type == KEYDOWN:
@@ -40,11 +58,14 @@ def check_events(events, block):
             #soll der Block nach recht oder links verschoben werden?
             if event.key == K_RIGHT:
                 rectangle_x = rectangle_x + BLOCK_WIDTH
+                list_y = rectangle_x / BLOCK_WIDTH
             if event.key == K_LEFT:
                 rectangle_x = rectangle_x - BLOCK_WIDTH
+                list_y = rectangle_x / BLOCK_WIDTH
         #soll der Block nach unten fallen?
         elif event.type == MOVEBLOCK:
             rectangle_y = rectangle_y + BLOCK_HEIGHT
+            list_x = rectangle_y / BLOCK_HEIGHT'''
 
 class Block(pygame.sprite.Sprite):
     def __init__(self, width, height):
@@ -59,17 +80,21 @@ class Block(pygame.sprite.Sprite):
         if not self.is_falling():
             return
         for event in events:
+            global list_x, list_y
             if event.type == KEYDOWN:
                 #soll der Block nach recht oder links verschoben werden?
                 if event.key == K_RIGHT:
                     if self.rect.x + BLOCK_WIDTH <= DISPLAY_WIDTH - BLOCK_WIDTH:
                         self.rect.x = self.rect.x + BLOCK_WIDTH
+                        list_y = self.rect.x / BLOCK_WIDTH
                 if event.key == K_LEFT:
                     if self.rect.x - BLOCK_WIDTH >= 0:
                         self.rect.x = self.rect.x - BLOCK_WIDTH
+                        list_y = self.rect.x / BLOCK_WIDTH
             #soll der Block nach unten fallen?
             elif event.type == MOVEBLOCK:
                 self.rect.y = self.rect.y + BLOCK_HEIGHT
+                list_x = self.rect.y / BLOCK_HEIGHT
 
     def is_falling(self):
         return self.rect.y < DISPLAY_LENGTH - BLOCK_HEIGHT
@@ -77,7 +102,6 @@ class Block(pygame.sprite.Sprite):
 #Kreiere ein eigenes Event, welches jede Sekunde ausgeführt wird -> um den Block nach unten zu bewegen
 MOVEBLOCK = pygame.USEREVENT + 1
 pygame.time.set_timer(MOVEBLOCK, 500)
-
 
 block = Block(BLOCK_WIDTH, BLOCK_HEIGHT)
 
@@ -124,6 +148,7 @@ while running:
 
     for block in block_group:
         screen.blit(block.image, block.rect)
+        board[list_x][list_y].append(True)
 
     
     #block_group.draw(screen)
