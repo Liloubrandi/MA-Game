@@ -84,14 +84,17 @@ class Block(pygame.sprite.Sprite):
                 #soll der Block nach recht oder links verschoben werden?
                 if event.key == K_RIGHT:
                     if self.rect.x + BLOCK_WIDTH <= DISPLAY_WIDTH - BLOCK_WIDTH:
+                        board[self.rect.y//BLOCK_HEIGHT][self.rect.x//BLOCK_WIDTH] = False
                         self.rect.x = self.rect.x + BLOCK_WIDTH
                         #list_y = self.rect.x // BLOCK_WIDTH
                 if event.key == K_LEFT:
                     if self.rect.x - BLOCK_WIDTH >= 0:
+                        board[self.rect.y//BLOCK_HEIGHT][self.rect.x//BLOCK_WIDTH] = False
                         self.rect.x = self.rect.x - BLOCK_WIDTH
                         #list_y = self.rect.x // BLOCK_WIDTH
             #soll der Block nach unten fallen?
             elif event.type == MOVEBLOCK:
+                board[self.rect.y//BLOCK_HEIGHT][self.rect.x//BLOCK_WIDTH] = False
                 self.rect.y = self.rect.y + BLOCK_HEIGHT
                 #list_x = self.rect.y // BLOCK_HEIGHT
 
