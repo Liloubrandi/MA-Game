@@ -18,32 +18,31 @@ pygame.init()
 #Parameter für Bildschirm und Block und Bildschirmerstellung
 DISPLAY_WIDTH = 450
 DISPLAY_LENGTH = 650
-BLOCK_WIDTH = DISPLAY_WIDTH/9
-BLOCK_HEIGHT = DISPLAY_LENGTH/13
+BLOCK_WIDTH = DISPLAY_WIDTH//9
+BLOCK_HEIGHT = DISPLAY_LENGTH//13
 screen = pygame.display.set_mode([DISPLAY_WIDTH, DISPLAY_LENGTH])
 
 #Variablen:
 running = True
 rectangle_y = 0
 rectangle_x = 0 + 4 * BLOCK_WIDTH
-fest_x = -BLOCK_WIDTH
-list_y = rectangle_x / BLOCK_WIDTH
-list_x = rectangle_y / BLOCK_HEIGHT
+#list_y = rectangle_x // BLOCK_WIDTH
+#list_x = rectangle_y // BLOCK_HEIGHT
 
 board = [
-    [], [], [], [], [], [], [], [], [],
-    [], [], [], [], [], [], [], [], [], 
-    [], [], [], [], [], [], [], [], [], 
-    [], [], [], [], [], [], [], [], [], 
-    [], [], [], [], [], [], [], [], [], 
-    [], [], [], [], [], [], [], [], [], 
-    [], [], [], [], [], [], [], [], [], 
-    [], [], [], [], [], [], [], [], [], 
-    [], [], [], [], [], [], [], [], [], 
-    [], [], [], [], [], [], [], [], [], 
-    [], [], [], [], [], [], [], [], [], 
-    [], [], [], [], [], [], [], [], [], 
-    [], [], [], [], [], [], [], [], []
+    [False, False, False, False, False, False, False, False, False],
+    [False, False, False, False, False, False, False, False, False], 
+    [False, False, False, False, False, False, False, False, False],
+    [False, False, False, False, False, False, False, False, False], 
+    [False, False, False, False, False, False, False, False, False],
+    [False, False, False, False, False, False, False, False, False], 
+    [False, False, False, False, False, False, False, False, False],
+    [False, False, False, False, False, False, False, False, False], 
+    [False, False, False, False, False, False, False, False, False],
+    [False, False, False, False, False, False, False, False, False], 
+    [False, False, False, False, False, False, False, False, False],
+    [False, False, False, False, False, False, False, False, False],  
+    [False, False, False, False, False, False, False, False, False],    
 ]
 
 '''def check_events(events, block):
@@ -86,15 +85,15 @@ class Block(pygame.sprite.Sprite):
                 if event.key == K_RIGHT:
                     if self.rect.x + BLOCK_WIDTH <= DISPLAY_WIDTH - BLOCK_WIDTH:
                         self.rect.x = self.rect.x + BLOCK_WIDTH
-                        list_y = self.rect.x / BLOCK_WIDTH
+                        #list_y = self.rect.x // BLOCK_WIDTH
                 if event.key == K_LEFT:
                     if self.rect.x - BLOCK_WIDTH >= 0:
                         self.rect.x = self.rect.x - BLOCK_WIDTH
-                        list_y = self.rect.x / BLOCK_WIDTH
+                        #list_y = self.rect.x // BLOCK_WIDTH
             #soll der Block nach unten fallen?
             elif event.type == MOVEBLOCK:
                 self.rect.y = self.rect.y + BLOCK_HEIGHT
-                list_x = self.rect.y / BLOCK_HEIGHT
+                #list_x = self.rect.y // BLOCK_HEIGHT
 
     def is_falling(self):
         return self.rect.y < DISPLAY_LENGTH - BLOCK_HEIGHT
@@ -148,7 +147,10 @@ while running:
 
     for block in block_group:
         screen.blit(block.image, block.rect)
-        board[list_x][list_y].append(True)
+        list_x = block.rect.x // BLOCK_WIDTH
+        list_y = block.rect.y // BLOCK_HEIGHT
+        if not board[list_y][list_x]:
+            board[list_y][list_x] = True
 
     
     #block_group.draw(screen)
