@@ -155,7 +155,9 @@ while running:
         list_y = block.rect.y // BLOCK_HEIGHT
         if not board[list_y][list_x]:
             board[list_y][list_x] = True
-            print(board)
+            for row in board:
+                print(row)
+            print(' ')
 
     
     #block_group.draw(screen)
