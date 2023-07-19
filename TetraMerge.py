@@ -79,7 +79,7 @@ class Block(pygame.sprite.Sprite):
         if not self.is_falling():
             return
         for event in events:
-            global list_x, list_y
+            #global list_x, list_y
             if event.type == KEYDOWN:
                 #soll der Block nach recht oder links verschoben werden?
                 if event.key == K_RIGHT:
@@ -94,9 +94,10 @@ class Block(pygame.sprite.Sprite):
                         #list_y = self.rect.x // BLOCK_WIDTH
             #soll der Block nach unten fallen?
             elif event.type == MOVEBLOCK:
-                board[self.rect.y//BLOCK_HEIGHT][self.rect.x//BLOCK_WIDTH] = False
-                self.rect.y = self.rect.y + BLOCK_HEIGHT
-                #list_x = self.rect.y // BLOCK_HEIGHT
+                if self.rect.y + BLOCK_HEIGHT <= DISPLAY_LENGTH - BLOCK_HEIGHT:
+                    board[self.rect.y//BLOCK_HEIGHT][self.rect.x//BLOCK_WIDTH] = False
+                    self.rect.y = self.rect.y + BLOCK_HEIGHT
+                    #list_x = self.rect.y // BLOCK_HEIGHT
 
     def is_falling(self):
         return self.rect.y < DISPLAY_LENGTH - BLOCK_HEIGHT
@@ -154,6 +155,7 @@ while running:
         list_y = block.rect.y // BLOCK_HEIGHT
         if not board[list_y][list_x]:
             board[list_y][list_x] = True
+            print(board)
 
     
     #block_group.draw(screen)
