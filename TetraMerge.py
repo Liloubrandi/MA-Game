@@ -19,10 +19,10 @@ from pygame.locals import (
 pygame.init()
 
 #Parameter für Bildschirm und Block und Bildschirmerstellung
-DISPLAY_WIDTH = 450
-DISPLAY_LENGTH = 650
-BLOCK_WIDTH = DISPLAY_WIDTH//9
-BLOCK_HEIGHT = DISPLAY_LENGTH//13
+DISPLAY_WIDTH = 500
+DISPLAY_LENGTH = 700
+BLOCK_WIDTH = DISPLAY_WIDTH//10
+BLOCK_HEIGHT = DISPLAY_LENGTH//14
 screen = pygame.display.set_mode([DISPLAY_WIDTH, DISPLAY_LENGTH])
 
 #Variablen:
@@ -33,19 +33,20 @@ rectangle_x = 0 + 4 * BLOCK_WIDTH
 #list_x = rectangle_y // BLOCK_HEIGHT
 
 board = [
-    [False, False, False, False, False, False, False, False, False],
-    [False, False, False, False, False, False, False, False, False], 
-    [False, False, False, False, False, False, False, False, False],
-    [False, False, False, False, False, False, False, False, False], 
-    [False, False, False, False, False, False, False, False, False],
-    [False, False, False, False, False, False, False, False, False], 
-    [False, False, False, False, False, False, False, False, False],
-    [False, False, False, False, False, False, False, False, False], 
-    [False, False, False, False, False, False, False, False, False],
-    [False, False, False, False, False, False, False, False, False], 
-    [False, False, False, False, False, False, False, False, False],
-    [False, False, False, False, False, False, False, False, False],  
-    [False, False, False, False, False, False, False, False, False],    
+    [False, False, False, False, False, False, False, False, False, False],
+    [False, False, False, False, False, False, False, False, False, False], 
+    [False, False, False, False, False, False, False, False, False, False],
+    [False, False, False, False, False, False, False, False, False, False], 
+    [False, False, False, False, False, False, False, False, False, False],
+    [False, False, False, False, False, False, False, False, False, False], 
+    [False, False, False, False, False, False, False, False, False, False],
+    [False, False, False, False, False, False, False, False, False, False], 
+    [False, False, False, False, False, False, False, False, False, False],
+    [False, False, False, False, False, False, False, False, False, False], 
+    [False, False, False, False, False, False, False, False, False, False],
+    [False, False, False, False, False, False, False, False, False, False],  
+    [False, False, False, False, False, False, False, False, False, False], 
+    [False, False, False, False, False, False, False, False, False, False],    
 ]
 
 '''def check_events(events, block):
