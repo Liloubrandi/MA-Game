@@ -1,6 +1,9 @@
 # Importiere pygame library
 import pygame
 
+#importiere random library
+import random
+
 # Importiere pygame.locals, um einen einfacheren Zugang zu Tasten zu haben
 from pygame.locals import (
     K_UP,
@@ -74,6 +77,7 @@ class Block(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = rectangle_x
         self.rect.y = 0
+        self.number = random.randint(1, 6)
 
     def check_events(self, events):
         if not self.is_falling():
@@ -84,13 +88,13 @@ class Block(pygame.sprite.Sprite):
                 #soll der Block nach recht oder links verschoben werden?
                 if event.key == K_RIGHT:
                     if self.rect.x + BLOCK_WIDTH <= DISPLAY_WIDTH - BLOCK_WIDTH:
-                        if board[self.rect.y//BLOCK_HEIGHT][self.rect.x//BLOCK_WIDTH + 1] != True:
+                        if board[self.rect.y//BLOCK_HEIGHT][self.rect.x//BLOCK_WIDTH + 1] == False:
                             board[self.rect.y//BLOCK_HEIGHT][self.rect.x//BLOCK_WIDTH] = False
                             self.rect.x = self.rect.x + BLOCK_WIDTH
                         #list_y = self.rect.x // BLOCK_WIDTH
                 if event.key == K_LEFT:
                     if self.rect.x - BLOCK_WIDTH >= 0:
-                        if board[self.rect.y//BLOCK_HEIGHT][self.rect.x//BLOCK_WIDTH - 1] != True:
+                        if board[self.rect.y//BLOCK_HEIGHT][self.rect.x//BLOCK_WIDTH - 1] == False:
                             board[self.rect.y//BLOCK_HEIGHT][self.rect.x//BLOCK_WIDTH] = False
                             self.rect.x = self.rect.x - BLOCK_WIDTH
                         #list_y = self.rect.x // BLOCK_WIDTH
@@ -103,7 +107,7 @@ class Block(pygame.sprite.Sprite):
 
     def is_falling(self):
         if self.rect.y < DISPLAY_LENGTH - BLOCK_HEIGHT:
-            if board[self.rect.y//BLOCK_HEIGHT+ 1][self.rect.x//BLOCK_WIDTH] != True:
+            if board[self.rect.y//BLOCK_HEIGHT+ 1][self.rect.x//BLOCK_WIDTH] == False:
                 return True
     
 
@@ -159,7 +163,7 @@ while running:
         list_x = block.rect.x // BLOCK_WIDTH
         list_y = block.rect.y // BLOCK_HEIGHT
         if not board[list_y][list_x]:
-            board[list_y][list_x] = True
+            board[list_y][list_x] = block.number
             '''for row in board:
                 print(row)
             print(' ')'''
