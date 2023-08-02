@@ -84,13 +84,15 @@ class Block(pygame.sprite.Sprite):
                 #soll der Block nach recht oder links verschoben werden?
                 if event.key == K_RIGHT:
                     if self.rect.x + BLOCK_WIDTH <= DISPLAY_WIDTH - BLOCK_WIDTH:
-                        board[self.rect.y//BLOCK_HEIGHT][self.rect.x//BLOCK_WIDTH] = False
-                        self.rect.x = self.rect.x + BLOCK_WIDTH
+                        if board[self.rect.y//BLOCK_HEIGHT][self.rect.x//BLOCK_WIDTH + 1] != True:
+                            board[self.rect.y//BLOCK_HEIGHT][self.rect.x//BLOCK_WIDTH] = False
+                            self.rect.x = self.rect.x + BLOCK_WIDTH
                         #list_y = self.rect.x // BLOCK_WIDTH
                 if event.key == K_LEFT:
                     if self.rect.x - BLOCK_WIDTH >= 0:
-                        board[self.rect.y//BLOCK_HEIGHT][self.rect.x//BLOCK_WIDTH] = False
-                        self.rect.x = self.rect.x - BLOCK_WIDTH
+                        if board[self.rect.y//BLOCK_HEIGHT][self.rect.x//BLOCK_WIDTH - 1] != True:
+                            board[self.rect.y//BLOCK_HEIGHT][self.rect.x//BLOCK_WIDTH] = False
+                            self.rect.x = self.rect.x - BLOCK_WIDTH
                         #list_y = self.rect.x // BLOCK_WIDTH
             #soll der Block nach unten fallen?
             elif event.type == MOVEBLOCK:
@@ -100,7 +102,10 @@ class Block(pygame.sprite.Sprite):
                     #list_x = self.rect.y // BLOCK_HEIGHT
 
     def is_falling(self):
-        return self.rect.y < DISPLAY_LENGTH - BLOCK_HEIGHT
+        if self.rect.y < DISPLAY_LENGTH - BLOCK_HEIGHT:
+            if board[self.rect.y//BLOCK_HEIGHT+ 1][self.rect.x//BLOCK_WIDTH] != True:
+                return True
+    
 
 #Kreiere ein eigenes Event, welches jede Sekunde ausgeführt wird -> um den Block nach unten zu bewegen
 MOVEBLOCK = pygame.USEREVENT + 1
@@ -155,9 +160,9 @@ while running:
         list_y = block.rect.y // BLOCK_HEIGHT
         if not board[list_y][list_x]:
             board[list_y][list_x] = True
-            for row in board:
+            '''for row in board:
                 print(row)
-            print(' ')
+            print(' ')'''
 
     
     #block_group.draw(screen)
