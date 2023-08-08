@@ -29,6 +29,7 @@ screen = pygame.display.set_mode([DISPLAY_WIDTH, DISPLAY_LENGTH])
 running = True
 rectangle_y = 0
 rectangle_x = 0 + 4 * BLOCK_WIDTH
+rectangle2_x = 0 + 5 * BLOCK_WIDTH
 #list_y = rectangle_x // BLOCK_WIDTH
 #list_x = rectangle_y // BLOCK_HEIGHT
 
@@ -71,12 +72,12 @@ board = [
             list_x = rectangle_y / BLOCK_HEIGHT'''
 
 class Block(pygame.sprite.Sprite):
-    def __init__(self, width, height):
+    def __init__(self, width, height, pos_x):
         super().__init__()
         self.image = pygame.Surface((width, height))
         self.image.fill((255, 0, 0))
         self.rect = self.image.get_rect()
-        self.rect.x = rectangle_x
+        self.rect.x = pos_x
         self.rect.y = 0
         self.number = random.randint(1, 6)
 
@@ -116,10 +117,11 @@ class Block(pygame.sprite.Sprite):
 MOVEBLOCK = pygame.USEREVENT + 1
 pygame.time.set_timer(MOVEBLOCK, 500)
 
-block = Block(BLOCK_WIDTH, BLOCK_HEIGHT)
+block = Block(BLOCK_WIDTH, BLOCK_HEIGHT, rectangle_x)
+block_2 = Block(BLOCK_WIDTH, BLOCK_HEIGHT, rectangle2_x)
 
 block_group = pygame.sprite.Group()
-block_group.add(block)
+block_group.add(block, block_2)
 
 #While-Schlaufe - machen bis running = False
 while running:
@@ -140,8 +142,9 @@ while running:
             has_active_block = True
 
     if not has_active_block:
-        block = Block(BLOCK_WIDTH, BLOCK_HEIGHT)
-        block_group.add(block)
+        block = Block(BLOCK_WIDTH, BLOCK_HEIGHT, rectangle_x)
+        block_2 = Block(BLOCK_WIDTH, BLOCK_HEIGHT, rectangle2_x)
+        block_group.add(block, block_2)
 
     #Hintergrund weiss machen
     screen.fill((255, 255, 255))
@@ -168,7 +171,6 @@ while running:
             '''for row in board:
                 print(row)
             print(' ')'''
-
     
     #block_group.draw(screen)
     # Flip the display - aktualisieren
