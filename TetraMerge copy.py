@@ -71,10 +71,8 @@ class Duo(pygame.sprite.Group):
 
     def is_falling(self):
         if self.y < DISPLAY_LENGTH - BLOCK_HEIGHT:
-            if board[self.y//BLOCK_HEIGHT+ 1][self.x//BLOCK_WIDTH] == False:
+            if board[self.y//BLOCK_HEIGHT + 1][self.x//BLOCK_WIDTH] == False:
                 return True
-        else:
-            return False
 
 class Block(pygame.sprite.Sprite):
     def __init__(self, width, height, pos_x):
@@ -88,14 +86,22 @@ class Block(pygame.sprite.Sprite):
 
     def move(self, direction):
         if direction == 'down':
-            board[self.rect.y//BLOCK_HEIGHT][self.rect.x//BLOCK_WIDTH] = False
+            board[self.list.y][self.list_x] = False
             self.rect.y = self.rect.y + BLOCK_HEIGHT
         if direction == 'right':
-            board[self.rect.y//BLOCK_HEIGHT][self.rect.x//BLOCK_WIDTH] = False
+            board[self.list.y][self.list_x] = False
             self.rect.x = self.rect.x + BLOCK_WIDTH
         if direction == 'left':
-            board[self.rect.y//BLOCK_HEIGHT][self.rect.x//BLOCK_WIDTH] = False
+            board[self.list.y][self.list_x] = False
             self.rect.x = self.rect.x - BLOCK_WIDTH
+    
+    @property #macht, dass die Methode eine Eigenschaft ist, welche ohne Klammern (list_x anstatt list_x()) angesprochen werden kann
+    def list_x(self):
+        return self.rect.x // BLOCK_WIDTH
+    
+    @property
+    def list_y(self):
+        return self.rect.y // BLOCK_HEIGHT
 
 #Kreiere ein eigenes Event, welches jede Sekunde ausgeführt wird -> um den Block nach unten zu bewegen
 BLOCKFALL = pygame.USEREVENT + 1
@@ -103,11 +109,11 @@ pygame.time.set_timer(BLOCKFALL, 500)
 
 #block = Block(BLOCK_WIDTH, BLOCK_HEIGHT, rectangle_x)
 #block_2 = Block(BLOCK_WIDTH, BLOCK_HEIGHT, rectangle2_x)
-block = Duo()
-
-block_group = pygame.sprite.Group()
-block_group.add(block)
-#block_group.add(block_2)
+duo = Duo()
+#block_group = pygame.sprite.Group()
+#block_group.add(block)
+duo_group = []
+duo_group.append(duo)
 
 #While-Schlaufe - machen bis running = False
 while running:
@@ -122,7 +128,7 @@ while running:
                 running = False
 
     has_active_block = False
-    for block in block_group:
+    for block in duo_group:
         for event in events:
             if event.type == KEYDOWN:
                 if event.key == K_RIGHT:
@@ -131,13 +137,13 @@ while running:
                     block.move_left()
             if event.type == BLOCKFALL:
                 block.move_down()
-                
-        if block.is_falling():
-            has_active_block = True
+
+    if block.is_falling():
+        has_active_block = True
 
     if not has_active_block:
-        block = Duo()
-        block_group.add(block)
+        duo = Duo()
+        duo_group.append(duo)
 
     #Hintergrund weiss machen
     screen.fill((255, 255, 255))
@@ -145,15 +151,14 @@ while running:
     #Zeichne ein Rechteck oben in die Mitte
     #pygame.draw.rect(screen, (255, 0, 0), [rectangle_x, rectangle_y, BLOCK_WIDTH, BLOCK_HEIGHT])
 
-    for block in block_group:
-        screen.blit(block.image, block.rect)
-        list_x = block.rect.x // BLOCK_WIDTH
-        list_y = block.rect.y // BLOCK_HEIGHT
-        if not board[list_y][list_x]:
-            board[list_y][list_x] = block
-            '''for row in board:
-                print(row)
-            print(' ')'''
+    for duo in duo_group:
+        for block in duo:
+            screen.blit(block.image, block.rect)
+            if not board[block.list_y][block.list_x]:
+                board[block.list_y][block.list_x] = block
+                '''for row in board:
+                    print(row)
+                print(' ')'''
     
     #block_group.draw(screen)
     #Flip the display - aktualisieren
