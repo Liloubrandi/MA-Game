@@ -57,17 +57,37 @@ class Duo(pygame.sprite.Group):
         block_2 = Block(BLOCK_WIDTH, BLOCK_HEIGHT, rectangle2_x)
         self.add(block)
         self.add(block_2)
-        self.x = rectangle2_x
         self.y = 0
+        self.x = rectangle2_x
+    
+    @property
+    def blocks(self):
+        return self.sprites()
 
     def move_down(self):
-        pass
+        for block in self.blocks:
+            block.move('down')
 
     def move_left(self):
-        pass
+        for block in self.blocks:
+            block.move('left')
 
     def move_right(self):
-        pass
+        for block in self.blocks:
+            block.move('right')
+
+    @property
+    def lowest_block(self):
+        #Voraussetzung: Es hat genau zwei Blöcke
+        #Wenn beide die gleichen y-Koordinaten haben -> waagerecht
+        #Wenn beide andere y-Koordinaten haben -> senkrecht
+        for block in self.blocks:
+            if block[0].rect.y == block[1].rect.y:
+                return block[0], block[1]
+            if block[0].rect.y > block[1].rect.y:
+                return block[0]
+            else:
+                return block[1]
 
     def is_falling(self):
         if self.y < DISPLAY_LENGTH - BLOCK_HEIGHT:
@@ -128,18 +148,18 @@ while running:
                 running = False
 
     has_active_block = False
-    for block in duo_group:
+    for duo in duo_group:
         for event in events:
-            if event.type == KEYDOWN:
-                if event.key == K_RIGHT:
-                    block.move_right()
-                if event.key == K_LEFT:
-                    block.move_left()
-            if event.type == BLOCKFALL:
-                block.move_down()
-
-    if block.is_falling():
-        has_active_block = True
+            if duo.is_falling():
+                if event.type == KEYDOWN:
+                    if event.key == K_RIGHT:
+                        duo.move_right()
+                    if event.key == K_LEFT:
+                        duo.move_left()
+                if event.type == BLOCKFALL:
+                    duo.move_down()
+        if duo.is_falling():
+            has_active_block = True
 
     if not has_active_block:
         duo = Duo()
