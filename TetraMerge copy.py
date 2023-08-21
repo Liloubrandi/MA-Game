@@ -57,8 +57,6 @@ class Duo(pygame.sprite.Group):
         block_2 = Block(BLOCK_WIDTH, BLOCK_HEIGHT, rectangle2_x)
         self.add(block)
         self.add(block_2)
-        self.y = 0
-        self.x = rectangle2_x
     
     @property
     def blocks(self):
@@ -81,18 +79,19 @@ class Duo(pygame.sprite.Group):
         #Voraussetzung: Es hat genau zwei Blöcke
         #Wenn beide die gleichen y-Koordinaten haben -> waagerecht
         #Wenn beide andere y-Koordinaten haben -> senkrecht
-        for block in self.blocks:
-            if block[0].rect.y == block[1].rect.y:
-                return block[0], block[1]
-            if block[0].rect.y > block[1].rect.y:
-                return block[0]
+        if self.blocks[0].rect.y == self.blocks[1].rect.y:
+            return self.blocks
+        else:
+            if self.blocks[0].rect.y > self.blocks[1].rect.y:
+                return [self.blocks[0]]
             else:
-                return block[1]
+                return [self.blocks[1]]
 
     def is_falling(self):
-        if self.y < DISPLAY_LENGTH - BLOCK_HEIGHT:
-            if board[self.y//BLOCK_HEIGHT + 1][self.x//BLOCK_WIDTH] == False:
-                return True
+        for block in self.lowest_block:
+            if block.rect.y < DISPLAY_LENGTH - BLOCK_HEIGHT:
+                if board[block.list_y + 1][block.list_x] == False:
+                    return True
 
 class Block(pygame.sprite.Sprite):
     def __init__(self, width, height, pos_x):
@@ -106,13 +105,13 @@ class Block(pygame.sprite.Sprite):
 
     def move(self, direction):
         if direction == 'down':
-            board[self.list.y][self.list_x] = False
+            board[self.list_y][self.list_x] = False
             self.rect.y = self.rect.y + BLOCK_HEIGHT
         if direction == 'right':
-            board[self.list.y][self.list_x] = False
+            board[self.list_y][self.list_x] = False
             self.rect.x = self.rect.x + BLOCK_WIDTH
         if direction == 'left':
-            board[self.list.y][self.list_x] = False
+            board[self.list_y][self.list_x] = False
             self.rect.x = self.rect.x - BLOCK_WIDTH
     
     @property #macht, dass die Methode eine Eigenschaft ist, welche ohne Klammern (list_x anstatt list_x()) angesprochen werden kann
