@@ -83,14 +83,52 @@ class Duo(pygame.sprite.Group):
             return self.blocks
         else:
             if self.blocks[0].rect.y > self.blocks[1].rect.y:
+                return [self.blocks[0]] #Wieso braucht es hier diese Listenklammern?
+            else:
+                return [self.blocks[1]]
+            
+    @property
+    def right_block(self):
+        #Voraussetzung: Es hat genau zwei Blöcke
+        #Wenn beide die gleichen x-Koordinaten haben -> senkrecht
+        #Wenn beide andere x-Koordinaten haben -> waagerecht
+        if self.blocks[0].rect.x == self.blocks[1].rect.x:
+            return self.blocks
+        else:
+            if self.blocks[0].rect.x > self.blocks[1].rect.x:
                 return [self.blocks[0]]
             else:
                 return [self.blocks[1]]
+    
+    @property
+    def left_block(self):
+        #Voraussetzung: Es hat genau zwei Blöcke
+        #Wenn beide die gleichen x-Koordinaten haben -> senkrecht
+        #Wenn beide andere x-Koordinaten haben -> waagerecht
+        if self.blocks[0].rect.x == self.blocks[1].rect.x:
+            return self.blocks
+        else:
+            if self.blocks[0].rect.x > self.blocks[1].rect.x:
+                return [self.blocks[1]]
+            else:
+                return [self.blocks[0]]
 
     def is_falling(self):
         for block in self.lowest_block:
-            if block.rect.y < DISPLAY_LENGTH - BLOCK_HEIGHT:
+            if block.rect.y < DISPLAY_LENGTH - BLOCK_HEIGHT: 
                 if board[block.list_y + 1][block.list_x] == False:
+                    return True
+    
+    def right_is_free(self):
+        for block in self.right_block:
+            if block.rect.x < DISPLAY_WIDTH - BLOCK_WIDTH:
+                if board[block.list_y][block.list_x + 1] == False:
+                    return True
+
+    def left_is_free(self):
+        for block in self.left_block:
+            if block.rect.x > 0:
+                if board[block.list_y][block.list_x - 1] == False:
                     return True
 
 class Block(pygame.sprite.Sprite):
@@ -152,11 +190,13 @@ while running:
             if duo.is_falling():
                 if event.type == KEYDOWN:
                     if event.key == K_RIGHT:
-                        duo.move_right()
+                        if duo.right_is_free():
+                            duo.move_right()
                     if event.key == K_LEFT:
-                        duo.move_left()
+                        if duo.left_is_free():
+                            duo.move_left()
                 if event.type == BLOCKFALL:
-                    duo.move_down()
+                        duo.move_down()
         if duo.is_falling():
             has_active_block = True
 
@@ -173,7 +213,7 @@ while running:
     for duo in duo_group:
         for block in duo:
             screen.blit(block.image, block.rect)
-            if not board[block.list_y][block.list_x]:
+            if board[block.list_y][block.list_x] == False:
                 board[block.list_y][block.list_x] = block
                 '''for row in board:
                     print(row)
