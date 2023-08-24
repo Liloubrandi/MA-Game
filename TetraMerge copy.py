@@ -114,11 +114,14 @@ class Duo(pygame.sprite.Group):
                 return [self.blocks[0]]
 
     def is_falling(self):
+        is_falling = True
         for block in self.lowest_block:
-            if block.rect.y < DISPLAY_LENGTH - BLOCK_HEIGHT: 
-                if board[block.list_y + 1][block.list_x] == False:
-                    return True
-    
+            if is_falling and block.rect.y < DISPLAY_LENGTH - BLOCK_HEIGHT: 
+                if board[block.list_y + 1][block.list_x] != False:
+                    is_falling = False
+            else:
+                is_falling = False
+            
     def right_is_free(self):
         for block in self.right_block:
             if block.rect.x < DISPLAY_WIDTH - BLOCK_WIDTH:
