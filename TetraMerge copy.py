@@ -57,6 +57,7 @@ class Duo(pygame.sprite.Group):
         block_2 = Block(BLOCK_WIDTH, BLOCK_HEIGHT, rectangle2_x)
         self.add(block)
         self.add(block_2)
+        self.rotation = 0
     
     @property
     def blocks(self):
@@ -121,6 +122,7 @@ class Duo(pygame.sprite.Group):
                     is_falling = False
             else:
                 is_falling = False
+        return is_falling
             
     def right_is_free(self):
         for block in self.right_block:
@@ -133,6 +135,23 @@ class Duo(pygame.sprite.Group):
             if block.rect.x > 0:
                 if board[block.list_y][block.list_x - 1] == False:
                     return True
+                
+    def rotation(self):
+        if self.rotation == 0:
+            for block in self.right_block:
+                block.rect.y += BLOCK_HEIGHT
+                block.rect.x -= BLOCK_WIDTH
+            self.rotation = 1
+        if self.rotation == 1:
+            for block in self.lowest_block:
+                block.rect.y -= BLOCK_HEIGHT
+                block.rect.x -= BLOCK_WIDTH
+            self.rotation = 2
+        if self.rotation == 2:
+            for block in self.left_block:
+                block.rect.y -= BLOCK_HEIGHT
+                block.rect.x += BLOCK_WIDTH
+            self.rotation = 0
 
 class Block(pygame.sprite.Sprite):
     def __init__(self, width, height, pos_x):
@@ -198,6 +217,9 @@ while running:
                     if event.key == K_LEFT:
                         if duo.left_is_free():
                             duo.move_left()
+                    if event.key == K_UP:
+                        if duo.left_is_free() and duo.right_is_free():
+                            duo.rotation()
                 if event.type == BLOCKFALL:
                         duo.move_down()
         if duo.is_falling():
