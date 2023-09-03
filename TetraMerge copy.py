@@ -124,30 +124,30 @@ class Duo(pygame.sprite.Group):
                 is_falling = False
         return is_falling
             
-    def right_is_free(self):
+    def is_right_free(self):
         for block in self.right_block:
             if block.rect.x < DISPLAY_WIDTH - BLOCK_WIDTH:
                 if board[block.list_y][block.list_x + 1] == False:
                     return True
 
-    def left_is_free(self):
+    def is_left_free(self):
         for block in self.left_block:
             if block.rect.x > 0:
                 if board[block.list_y][block.list_x - 1] == False:
                     return True
                 
-    def rotation(self):
+    def rotate(self):
         if self.rotation == 0:
             for block in self.right_block:
                 block.rect.y += BLOCK_HEIGHT
                 block.rect.x -= BLOCK_WIDTH
             self.rotation = 1
-        if self.rotation == 1:
+        elif self.rotation == 1:
             for block in self.lowest_block:
                 block.rect.y -= BLOCK_HEIGHT
                 block.rect.x -= BLOCK_WIDTH
             self.rotation = 2
-        if self.rotation == 2:
+        elif self.rotation == 2:
             for block in self.left_block:
                 block.rect.y -= BLOCK_HEIGHT
                 block.rect.x += BLOCK_WIDTH
@@ -212,14 +212,14 @@ while running:
             if duo.is_falling():
                 if event.type == KEYDOWN:
                     if event.key == K_RIGHT:
-                        if duo.right_is_free():
+                        if duo.is_right_free():
                             duo.move_right()
                     if event.key == K_LEFT:
-                        if duo.left_is_free():
+                        if duo.is_left_free():
                             duo.move_left()
                     if event.key == K_UP:
-                        if duo.left_is_free() and duo.right_is_free():
-                            duo.rotation()
+                        if duo.is_left_free() and duo.is_right_free():
+                            duo.rotate()
                 if event.type == BLOCKFALL:
                         duo.move_down()
         if duo.is_falling():
