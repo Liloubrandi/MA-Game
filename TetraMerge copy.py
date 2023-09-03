@@ -185,12 +185,27 @@ class Duo(pygame.sprite.Group):
 class Block(pygame.sprite.Sprite):
     def __init__(self, width, height, pos_x):
         super().__init__()
+        self.number = random.randint(1, 6)
         self.image = pygame.Surface((width, height))
-        self.image.fill((255, 0, 0))
+        self.image.fill(self.color)
         self.rect = self.image.get_rect()
         self.rect.x = pos_x
         self.rect.y = 0
-        self.number = random.randint(1, 6)
+    
+    @property
+    def color(self):
+        if self.number == 1:
+            return (255, 0, 0)
+        if self.number == 2:
+            return (0, 255, 0)
+        if self.number == 3:
+            return (0, 0, 255)
+        if self.number == 4:
+            return (255, 255, 0)
+        if self.number == 5:
+            return (255, 0, 255)
+        if self.number == 6:
+            return (0, 255, 255)
 
     def move(self, direction):
         if direction == 'down':
