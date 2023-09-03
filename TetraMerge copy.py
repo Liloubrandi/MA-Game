@@ -135,16 +135,24 @@ class Duo(pygame.sprite.Group):
         return is_falling
             
     def is_right_free(self):
+        is_right_free = True
         for block in self.right_block:
-            if block.rect.x < DISPLAY_WIDTH - BLOCK_WIDTH:
-                if board[block.list_y][block.list_x + 1] == False:
-                    return True
+            if is_right_free and block.rect.x < DISPLAY_WIDTH - BLOCK_WIDTH:
+                if board[block.list_y][block.list_x + 1] != False:
+                    is_right_free = False
+            else:
+                is_right_free = False
+        return is_right_free
 
     def is_left_free(self):
+        is_left_free = True 
         for block in self.left_block:
-            if block.rect.x > 0:
-                if board[block.list_y][block.list_x - 1] == False:
-                    return True
+            if is_left_free and block.rect.x > 0:
+                if board[block.list_y][block.list_x - 1] != False:
+                    is_left_free = False
+            else:
+                is_left_free = False
+        return is_left_free
                 
     def rotate(self):
         if self.rotation == 'horizontal_right':
