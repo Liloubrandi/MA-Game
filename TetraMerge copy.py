@@ -57,7 +57,7 @@ class Duo(pygame.sprite.Group):
         block_2 = Block(BLOCK_WIDTH, BLOCK_HEIGHT, rectangle2_x)
         self.add(block)
         self.add(block_2)
-        self.rotation = 0
+        self.rotation = 'horizontal_right'
     
     @property
     def blocks(self):
@@ -85,6 +85,16 @@ class Duo(pygame.sprite.Group):
         else:
             if self.blocks[0].rect.y > self.blocks[1].rect.y:
                 return [self.blocks[0]] #Wieso braucht es hier diese Listenklammern?
+            else:
+                return [self.blocks[1]]
+            
+    @property
+    def highest_block(self):
+        if self.blocks[0].rect.y == self.blocks[1].rect.y:
+            return self.blocks
+        else:
+            if self.blocks[0].rect.y > self.blocks[1].rect.y:
+                return [self.blocks[1]]
             else:
                 return [self.blocks[1]]
             
@@ -137,21 +147,28 @@ class Duo(pygame.sprite.Group):
                     return True
                 
     def rotate(self):
-        if self.rotation == 0:
+        if self.rotation == 'horizontal_right':
             for block in self.right_block:
                 block.rect.y += BLOCK_HEIGHT
                 block.rect.x -= BLOCK_WIDTH
-            self.rotation = 1
-        elif self.rotation == 1:
-            for block in self.lowest_block:
-                block.rect.y -= BLOCK_HEIGHT
-                block.rect.x -= BLOCK_WIDTH
-            self.rotation = 2
-        elif self.rotation == 2:
+            self.rotation = 'vertical_down'
+        elif self.rotation == 'vertical_down':
+            if self.is_left_free():
+                for block in self.lowest_block:
+                    block.rect.y -= BLOCK_HEIGHT
+                    block.rect.x -= BLOCK_WIDTH
+            self.rotation = 'horizontal_left'
+        elif self.rotation == 'horizontal_left':
             for block in self.left_block:
                 block.rect.y -= BLOCK_HEIGHT
                 block.rect.x += BLOCK_WIDTH
-            self.rotation = 0
+            self.rotation = 'vertical_up'
+        elif self.rotation == 'vertical_up':
+            if self.is_right_free():
+                for block in self.highest_block:
+                    block.rect.y += BLOCK_HEIGHT
+                    block.rect.x += BLOCK_WIDTH
+            self.rotation = 'horizontal_right'
 
 class Block(pygame.sprite.Sprite):
     def __init__(self, width, height, pos_x):
@@ -218,7 +235,6 @@ while running:
                         if duo.is_left_free():
                             duo.move_left()
                     if event.key == K_UP:
-                        if duo.is_left_free() and duo.is_right_free():
                             duo.rotate()
                 if event.type == BLOCKFALL:
                         duo.move_down()
