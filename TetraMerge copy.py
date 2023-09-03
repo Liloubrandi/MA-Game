@@ -18,6 +18,13 @@ from pygame.locals import (
 #initialize
 pygame.init()
 
+YELLOW = (255, 255, 0)
+RED = (204, 0, 0)
+GREEN = (0, 204, 0)
+BLUE = (0, 0, 204)
+PURPLE = (102, 0, 204)
+PINK = (204, 0, 204)
+
 #Parameter für Bildschirm und Block und Bildschirmerstellung
 DISPLAY_WIDTH = 500
 DISPLAY_LENGTH = 700
@@ -195,17 +202,17 @@ class Block(pygame.sprite.Sprite):
     @property
     def color(self):
         if self.number == 1:
-            return (255, 0, 0)
+            return YELLOW
         if self.number == 2:
-            return (0, 255, 0)
+            return RED
         if self.number == 3:
-            return (0, 0, 255)
+            return PINK
         if self.number == 4:
-            return (255, 255, 0)
+            return PURPLE
         if self.number == 5:
-            return (255, 0, 255)
+            return BLUE
         if self.number == 6:
-            return (0, 255, 255)
+            return GREEN
 
     def move(self, direction):
         if direction == 'down':
