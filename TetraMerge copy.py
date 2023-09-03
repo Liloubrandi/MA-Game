@@ -174,7 +174,7 @@ class Duo(pygame.sprite.Group):
                     board[block.list_y][block.list_x] = False
                     block.rect.y -= BLOCK_HEIGHT
                     block.rect.x -= BLOCK_WIDTH
-            self.rotation = 'horizontal_left'
+                self.rotation = 'horizontal_left'
         elif self.rotation == 'horizontal_left':
             for block in self.left_block:
                 board[block.list_y][block.list_x] = False
@@ -187,7 +187,7 @@ class Duo(pygame.sprite.Group):
                     board[block.list_y][block.list_x] = False
                     block.rect.y += BLOCK_HEIGHT
                     block.rect.x += BLOCK_WIDTH
-            self.rotation = 'horizontal_right'
+                self.rotation = 'horizontal_right'
 
 class Block(pygame.sprite.Sprite):
     def __init__(self, width, height, pos_x):
