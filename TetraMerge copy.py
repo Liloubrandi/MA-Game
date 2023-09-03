@@ -157,23 +157,27 @@ class Duo(pygame.sprite.Group):
     def rotate(self):
         if self.rotation == 'horizontal_right':
             for block in self.right_block:
+                board[block.list_y][block.list_x] = False
                 block.rect.y += BLOCK_HEIGHT
                 block.rect.x -= BLOCK_WIDTH
             self.rotation = 'vertical_down'
         elif self.rotation == 'vertical_down':
             if self.is_left_free():
                 for block in self.lowest_block:
+                    board[block.list_y][block.list_x] = False
                     block.rect.y -= BLOCK_HEIGHT
                     block.rect.x -= BLOCK_WIDTH
             self.rotation = 'horizontal_left'
         elif self.rotation == 'horizontal_left':
             for block in self.left_block:
+                board[block.list_y][block.list_x] = False
                 block.rect.y -= BLOCK_HEIGHT
                 block.rect.x += BLOCK_WIDTH
             self.rotation = 'vertical_up'
         elif self.rotation == 'vertical_up':
             if self.is_right_free():
                 for block in self.highest_block:
+                    board[block.list_y][block.list_x] = False
                     block.rect.y += BLOCK_HEIGHT
                     block.rect.x += BLOCK_WIDTH
             self.rotation = 'horizontal_right'
