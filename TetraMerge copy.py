@@ -232,7 +232,32 @@ class Block(pygame.sprite.Sprite):
     
     @property
     def list_y(self):
-        return self.rect.y // BLOCK_HEIGHT        
+        return self.rect.y // BLOCK_HEIGHT     
+
+def mergen(x, y, number):
+    #Rahmenbedingungen
+    if x < 0 or x > DISPLAY_WIDTH - BLOCK_WIDTH:
+        return False
+    if y < 0 or y > DISPLAY_LENGTH - BLOCK_HEIGHT:
+        return False
+    #Feld überprüfen
+    if board[y // BLOCK_HEIGHT][x // BLOCK_WIDTH].number == number:
+        board[y // BLOCK_HEIGHT][x // BLOCK_WIDTH]  = False
+        mergen(Block.rect.x, Block.rect.y + BLOCK_HEIGHT, Block.number) #unten
+        mergen(Block.rect.x, Block.rect.y - BLOCK_HEIGHT, Block.number) #oben
+        mergen(Block.rect.x + BLOCK_WIDTH, Block.rect.y, Block.number) #recht
+        mergen(Block.rect.x - BLOCK_WIDTH, Block.rect.y, Block.number) #links
+        
+def fill(x, y):
+    board[x][y].number = board[x][y].number + 1
+    for row in range(DISPLAY_LENGTH // BLOCK_HEIGHT, 0, -1):
+        for field in range(DISPLAY_LENGTH // BLOCK_HEIGHT, 0, -1):
+            if board[row][field] == False:
+                row_index = row 
+                while row_index > 0 and board[row_index][field] == 0:
+                    row_index = row_index - 1
+                board[row][field] = board[row_index][field]
+                board[row_index][field] = False
 
 #Kreiere ein eigenes Event, welches jede Sekunde ausgeführt wird -> um den Block nach unten zu bewegen
 BLOCKFALL = pygame.USEREVENT + 1
@@ -275,6 +300,9 @@ while running:
                         duo.move_down()
         if duo.is_falling():
             has_active_block = True
+
+    mergen(Block.rect.x, Block.rect.y, Block.number)
+    fill(Block.rect.x, Block.rect.y)
 
     if not has_active_block:
         for field in board[0]:
