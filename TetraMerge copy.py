@@ -37,6 +37,7 @@ running = True
 rectangle_y = 0
 rectangle_x = 0 + 4 * BLOCK_WIDTH
 rectangle2_x = 0 + 5 * BLOCK_WIDTH
+timer = 500
 #list_y = rectangle_x // BLOCK_WIDTH
 #list_x = rectangle_y // BLOCK_HEIGHT
 
@@ -231,11 +232,11 @@ class Block(pygame.sprite.Sprite):
     
     @property
     def list_y(self):
-        return self.rect.y // BLOCK_HEIGHT
+        return self.rect.y // BLOCK_HEIGHT        
 
 #Kreiere ein eigenes Event, welches jede Sekunde ausgeführt wird -> um den Block nach unten zu bewegen
 BLOCKFALL = pygame.USEREVENT + 1
-pygame.time.set_timer(BLOCKFALL, 500)
+pygame.time.set_timer(BLOCKFALL, timer)
 
 #block = Block(BLOCK_WIDTH, BLOCK_HEIGHT, rectangle_x)
 #block_2 = Block(BLOCK_WIDTH, BLOCK_HEIGHT, rectangle2_x)
@@ -269,16 +270,20 @@ while running:
                         if duo.is_left_free():
                             duo.move_left()
                     if event.key == K_UP:
-                            duo.rotate()
+                        duo.rotate()
                 if event.type == BLOCKFALL:
                         duo.move_down()
         if duo.is_falling():
             has_active_block = True
 
     if not has_active_block:
-        duo = Duo()
-        duo_group.append(duo)
-
+        for field in board[0]:
+            if field == False:
+                duo = Duo()
+                duo_group.append(duo)
+            else:
+                running = False
+                print('Du hast leider verloren')
     #Hintergrund weiss machen
     screen.fill((255, 255, 255))
 
@@ -293,7 +298,7 @@ while running:
                 '''for row in board:
                     print(row)
                 print(' ')'''
-    
+
     #block_group.draw(screen)
     #Flip the display - aktualisieren
     pygame.display.flip()
