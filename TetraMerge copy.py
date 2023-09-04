@@ -250,6 +250,8 @@ def mergen(x, y, number):
         
 def fill(x, y):
     board[x][y].number = board[x][y].number + 1
+    if board[x][y].number == 6:
+        board[x][y] == False
     for row in range(DISPLAY_LENGTH // BLOCK_HEIGHT, 0, -1):
         for field in range(DISPLAY_LENGTH // BLOCK_HEIGHT, 0, -1):
             if board[row][field] == False:
