@@ -58,6 +58,21 @@ board = [
     [False, False, False, False, False, False, False, False, False, False],    
 ]
 
+class Board(pygame.sprite.Group):
+    def __init__(self):
+        super().__init__()
+        duo = Duo()
+        self.add(duo)
+
+    def is_right_free(self):
+        pass
+
+    def left_is_free(self):
+        pass
+
+    def is_falling(self):
+        pass
+
 class Duo(pygame.sprite.Group):
     def __init__(self):
         super().__init__()
@@ -234,7 +249,7 @@ class Block(pygame.sprite.Sprite):
     def list_y(self):
         return self.rect.y // BLOCK_HEIGHT     
 
-def mergen(x, y, number):
+'''def mergen(x, y, number):
     #Rahmenbedingungen
     if x < 0 or x > DISPLAY_WIDTH - BLOCK_WIDTH:
         return False
@@ -259,7 +274,7 @@ def fill(x, y):
                 while row_index > 0 and board[row_index][field] == 0:
                     row_index = row_index - 1
                 board[row][field] = board[row_index][field]
-                board[row_index][field] = False
+                board[row_index][field] = False'''
 
 #Kreiere ein eigenes Event, welches jede Sekunde ausgeführt wird -> um den Block nach unten zu bewegen
 BLOCKFALL = pygame.USEREVENT + 1
@@ -303,8 +318,8 @@ while running:
         if duo.is_falling():
             has_active_block = True
 
-    mergen(Block.rect.x, Block.rect.y, Block.number)
-    fill(Block.rect.x, Block.rect.y)
+    #mergen(Block.rect.x, Block.rect.y, Block.number)
+    #fill(Block.rect.x, Block.rect.y)
 
     if not has_active_block:
         for field in board[0]:
