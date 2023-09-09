@@ -58,20 +58,27 @@ board = [
     [False, False, False, False, False, False, False, False, False, False],    
 ]
 
-class Board(pygame.sprite.Group):
+class Board():
     def __init__(self):
-        super().__init__()
-        duo = Duo()
-        self.add(duo)
+        self.blocks = []
 
-    def is_right_free(self):
-        pass
+    def register(self, block):
+        self.blocks.append(block)
+    
+    def is_right_free(self, x, y):          
+        for block in self.blocks:
+            if block.rect.y == y and block.rect.x == x + 1:
+                return False
 
-    def left_is_free(self):
-        pass
+    def left_is_free(self, x, y):
+        for block in self.blocks:
+            if block.rect.y == y and block.rect.y == x - 1:
+                return False
 
-    def is_falling(self):
-        pass
+    def is_falling(self, x, y):
+        for block in self.blocks:
+            if block.rect.x == x and block.rect.y == y + BLOCK_HEIGHT:
+                return False
 
 class Duo(pygame.sprite.Group):
     def __init__(self):
@@ -151,7 +158,7 @@ class Duo(pygame.sprite.Group):
         is_falling = True
         for block in self.lowest_block:
             if is_falling and block.rect.y < DISPLAY_LENGTH - BLOCK_HEIGHT: 
-                if board[block.list_y + 1][block.list_x] != False:
+                if Board.is_falling(Board, block.rect.x, block.rect.y) == False: #Muss das "self" immer noch mitgeben, geht nich einfach so
                     is_falling = False
             else:
                 is_falling = False
@@ -161,7 +168,8 @@ class Duo(pygame.sprite.Group):
         is_right_free = True
         for block in self.right_block:
             if is_right_free and block.rect.x < DISPLAY_WIDTH - BLOCK_WIDTH:
-                if board[block.list_y][block.list_x + 1] != False:
+                if Board.is_right_free(Board, block.rect.x, block.rect.y) == False:
+                #if board[block.list_y][block.list_x + 1] != False:
                     is_right_free = False
             else:
                 is_right_free = False
@@ -171,7 +179,8 @@ class Duo(pygame.sprite.Group):
         is_left_free = True 
         for block in self.left_block:
             if is_left_free and block.rect.x > 0:
-                if board[block.list_y][block.list_x - 1] != False:
+                if Board.is_left_free(Board, block.rect.x, block.rect.y) == False:
+                #if board[block.list_y][block.list_x - 1] != False:
                     is_left_free = False
             else:
                 is_left_free = False
@@ -338,9 +347,10 @@ while running:
     for duo in duo_group:
         for block in duo:
             screen.blit(block.image, block.rect)
-            if board[block.list_y][block.list_x] == False:
-                board[block.list_y][block.list_x] = block
-                '''for row in board:
+            #if board[block.list_y][block.list_x] == False:
+            #board[block.list_y][block.list_x] = block 
+            Board.register(Board, block)
+            '''for row in board:
                     print(row)
                 print(' ')'''
 
