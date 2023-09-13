@@ -350,7 +350,7 @@ while running:
             screen.blit(block.image, block.rect)
             #if board[block.list_y][block.list_x] == False:
             #board[block.list_y][block.list_x] = block 
-            Board.register(Board, block)
+            block.board.register(block)
             '''for row in board:
                     print(row)
                 print(' ')'''
