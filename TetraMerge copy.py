@@ -41,7 +41,7 @@ timer = 500
 #list_y = rectangle_x // BLOCK_WIDTH
 #list_x = rectangle_y // BLOCK_HEIGHT
 
-board = [
+'''board = [
     [False, False, False, False, False, False, False, False, False, False],
     [False, False, False, False, False, False, False, False, False, False], 
     [False, False, False, False, False, False, False, False, False, False],
@@ -56,7 +56,7 @@ board = [
     [False, False, False, False, False, False, False, False, False, False],  
     [False, False, False, False, False, False, False, False, False, False], 
     [False, False, False, False, False, False, False, False, False, False],    
-]
+]'''
 
 class Board():
     def __init__(self):
@@ -67,18 +67,25 @@ class Board():
     
     def right_free(self, x, y):          
         for block in self.blocks:
-            if block.rect.y == y and block.rect.x == x + 1:
+            if block.rect.y == y and block.rect.x == x + BLOCK_WIDTH:
                 return False
 
     def left_free(self, x, y):
         for block in self.blocks:
-            if block.rect.y == y and block.rect.y == x - 1:
+            if block.rect.y == y and block.rect.y == x - BLOCK_WIDTH:
                 return False
 
     def falling(self, x, y):
+        falling = True
         for block in self.blocks:
-            if block.rect.x == x and block.rect.y == y + BLOCK_HEIGHT:
-                return False
+            if falling and block.rect.x == x and block.rect.y == y + BLOCK_HEIGHT:
+                falling = False
+
+
+    def lost(self):
+        for block in self.blocks:
+            if block.rect.y == 0:
+                return True
 
 class Duo(pygame.sprite.Group):
     def __init__(self):
@@ -163,6 +170,7 @@ class Duo(pygame.sprite.Group):
             else:
                 is_falling = False
         return is_falling
+        
             
     def is_right_free(self):
         is_right_free = True
@@ -189,27 +197,27 @@ class Duo(pygame.sprite.Group):
     def rotate(self):
         if self.rotation == 'horizontal_right':
             for block in self.right_block:
-                board[block.list_y][block.list_x] = False
+                #board[block.list_y][block.list_x] = False
                 block.rect.y += BLOCK_HEIGHT
                 block.rect.x -= BLOCK_WIDTH
             self.rotation = 'vertical_down'
         elif self.rotation == 'vertical_down':
             if self.is_left_free():
                 for block in self.lowest_block:
-                    board[block.list_y][block.list_x] = False
+                    #board[block.list_y][block.list_x] = False
                     block.rect.y -= BLOCK_HEIGHT
                     block.rect.x -= BLOCK_WIDTH
                 self.rotation = 'horizontal_left'
         elif self.rotation == 'horizontal_left':
             for block in self.left_block:
-                board[block.list_y][block.list_x] = False
+                #board[block.list_y][block.list_x] = False
                 block.rect.y -= BLOCK_HEIGHT
                 block.rect.x += BLOCK_WIDTH
             self.rotation = 'vertical_up'
         elif self.rotation == 'vertical_up':
             if self.is_right_free():
                 for block in self.highest_block:
-                    board[block.list_y][block.list_x] = False
+                    #board[block.list_y][block.list_x] = False
                     block.rect.y += BLOCK_HEIGHT
                     block.rect.x += BLOCK_WIDTH
                 self.rotation = 'horizontal_right'
@@ -242,13 +250,13 @@ class Block(pygame.sprite.Sprite):
 
     def move(self, direction):
         if direction == 'down':
-            board[self.list_y][self.list_x] = False
+            #board[self.list_y][self.list_x] = False
             self.rect.y = self.rect.y + BLOCK_HEIGHT
         if direction == 'right':
-            board[self.list_y][self.list_x] = False
+            #board[self.list_y][self.list_x] = False
             self.rect.x = self.rect.x + BLOCK_WIDTH
         if direction == 'left':
-            board[self.list_y][self.list_x] = False
+            #board[self.list_y][self.list_x] = False
             self.rect.x = self.rect.x - BLOCK_WIDTH
     
     @property #macht, dass die Methode eine Eigenschaft ist, welche ohne Klammern (list_x anstatt list_x()) angesprochen werden kann
@@ -332,13 +340,21 @@ while running:
     #fill(Block.rect.x, Block.rect.y)
 
     if not has_active_block:
-        for field in board[0]:
+        board = Board()
+        if board.lost():
+            running = False 
+            print('Du hast leider verloren')
+        else:
+            duo = Duo()
+            duo_group.append(duo)
+    
+        '''for field in board[0]:
             if field == False:
                 duo = Duo()
                 duo_group.append(duo)
             else:
                 running = False
-                print('Du hast leider verloren')
+                print('Du hast leider verloren')'''
     #Hintergrund weiss machen
     screen.fill((255, 255, 255))
 
