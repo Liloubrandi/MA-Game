@@ -26,10 +26,12 @@ PURPLE = (102, 0, 204)
 PINK = (204, 0, 204)
 
 #Parameter für Bildschirm und Block und Bildschirmerstellung
+BLOCKS_VERTICAL = 14
+BLOCKS_HORIZONTAL = 10
 DISPLAY_WIDTH = 500
 DISPLAY_LENGTH = 700
-BLOCK_WIDTH = DISPLAY_WIDTH//10
-BLOCK_HEIGHT = DISPLAY_LENGTH//14
+BLOCK_WIDTH = DISPLAY_WIDTH//BLOCKS_HORIZONTAL
+BLOCK_HEIGHT = DISPLAY_LENGTH//BLOCKS_VERTICAL
 screen = pygame.display.set_mode([DISPLAY_WIDTH, DISPLAY_LENGTH])
 
 #Variablen:
@@ -38,63 +40,44 @@ rectangle_y = 0
 rectangle_x = 0 + 4 * BLOCK_WIDTH
 rectangle2_x = 0 + 5 * BLOCK_WIDTH
 timer = 500
-#list_y = rectangle_x // BLOCK_WIDTH
-#list_x = rectangle_y // BLOCK_HEIGHT
-
-'''board = [
-    [False, False, False, False, False, False, False, False, False, False],
-    [False, False, False, False, False, False, False, False, False, False], 
-    [False, False, False, False, False, False, False, False, False, False],
-    [False, False, False, False, False, False, False, False, False, False], 
-    [False, False, False, False, False, False, False, False, False, False],
-    [False, False, False, False, False, False, False, False, False, False], 
-    [False, False, False, False, False, False, False, False, False, False],
-    [False, False, False, False, False, False, False, False, False, False], 
-    [False, False, False, False, False, False, False, False, False, False],
-    [False, False, False, False, False, False, False, False, False, False], 
-    [False, False, False, False, False, False, False, False, False, False],
-    [False, False, False, False, False, False, False, False, False, False],  
-    [False, False, False, False, False, False, False, False, False, False], 
-    [False, False, False, False, False, False, False, False, False, False],    
-]'''
 
 class Board():
     def __init__(self):
-        self.blocks = []
+        self.duos = []
 
-    def register(self, block):
-        self.blocks.append(block)
+    def register(self, duo):
+        self.duos.append(duo)
+        #raise exception, wenn ausserhalb oder Position schon besetzt
     
-    def right_free(self, x, y):          
-        for block in self.blocks:
-            if block.rect.y == y and block.rect.x == x + BLOCK_WIDTH:
-                return False
+    @property
+    def block_list(self):
+        block_list = []
+        for duo in self.duos:
+            for block in duo.blocks:
+                block_list.append(block)
+        return block_list
 
-    def left_free(self, x, y):
-        for block in self.blocks:
-            if block.rect.y == y and block.rect.y == x - BLOCK_WIDTH:
-                return False
-
-    def falling(self, x, y):
-        falling = True
-        for block in self.blocks:
-            if falling and block.rect.x == x and block.rect.y == y + BLOCK_HEIGHT:
-                falling = False
-
+    def get_block(self, x, y):
+        for block in self.block_list:
+            if block.list_x == x and block.list_y == y:
+                return block
 
     def lost(self):
-        for block in self.blocks:
-            if block.rect.y == 0:
-                return True
+        for duo in self.duos:
+            for block in duo.blocks:
+                if block.list_y == 0:
+                    return True
 
 class Duo(pygame.sprite.Group):
-    def __init__(self):
+    def __init__(self, board):
         super().__init__()
-        block = Block(BLOCK_WIDTH, BLOCK_HEIGHT, rectangle_x)
-        block_2 = Block(BLOCK_WIDTH, BLOCK_HEIGHT, rectangle2_x)
+        self.board : Board = board
+        block = Block(BLOCK_WIDTH, BLOCK_HEIGHT, rectangle_x, board)
+        block_2 = Block(BLOCK_WIDTH, BLOCK_HEIGHT, rectangle2_x, board)
         self.add(block)
         self.add(block_2)
         self.rotation = 'horizontal_right'
+        self.board.register(self)
     
     @property
     def blocks(self):
@@ -164,34 +147,22 @@ class Duo(pygame.sprite.Group):
     def is_falling(self):
         is_falling = True
         for block in self.lowest_block:
-            if is_falling and block.rect.y < DISPLAY_LENGTH - BLOCK_HEIGHT: 
-                if block.board.falling(block.rect.x, block.rect.y) == False: 
-                    is_falling = False
-            else:
+            if is_falling and not block.falling():
                 is_falling = False
         return is_falling
         
-            
     def is_right_free(self):
         is_right_free = True
         for block in self.right_block:
-            if is_right_free and block.rect.x < DISPLAY_WIDTH - BLOCK_WIDTH:
-                if block.board.right_free(block.rect.x, block.rect.y) == False:
-                #if board[block.list_y][block.list_x + 1] != False:
+            if is_right_free and not block.right_free():
                     is_right_free = False
-            else:
-                is_right_free = False
         return is_right_free
 
     def is_left_free(self):
         is_left_free = True 
         for block in self.left_block:
-            if is_left_free and block.rect.x > 0:
-                if block.board.left_free(block.rect.x, block.rect.y) == False:
-                #if board[block.list_y][block.list_x - 1] != False:
+            if is_left_free and not block.left_free():
                     is_left_free = False
-            else:
-                is_left_free = False
         return is_left_free
                 
     def rotate(self):
@@ -223,15 +194,15 @@ class Duo(pygame.sprite.Group):
                 self.rotation = 'horizontal_right'
 
 class Block(pygame.sprite.Sprite):
-    def __init__(self, width, height, pos_x):
+    def __init__(self, width, height, pos_x, board):
         super().__init__()
+        self.board = board
         self.number = random.randint(1, 6)
         self.image = pygame.Surface((width, height))
         self.image.fill(self.color)
         self.rect = self.image.get_rect()
         self.rect.x = pos_x
         self.rect.y = 0
-        self.board = Board()
     
     @property
     def color(self):
@@ -258,6 +229,25 @@ class Block(pygame.sprite.Sprite):
         if direction == 'left':
             #board[self.list_y][self.list_x] = False
             self.rect.x = self.rect.x - BLOCK_WIDTH
+
+    def falling(self):
+        if self.list_y < BLOCKS_VERTICAL - 1:
+            if self.board.get_block(self.list_x, self.list_y + 1) is None:
+                return True
+        return False
+    
+    def right_free(self):
+        if self.list_x < BLOCKS_HORIZONTAL - 1:
+            if self.board.get_block(self.list_x + 1, self.list_y) is None:
+                return True
+        return False
+    
+    def left_free(self):
+        if self.list_x > 0:
+            if self.board.get_block(self.list_x - 1, self.list_y) is None:
+                return True
+        return False
+               
     
     @property #macht, dass die Methode eine Eigenschaft ist, welche ohne Klammern (list_x anstatt list_x()) angesprochen werden kann
     def list_x(self):
@@ -298,13 +288,11 @@ def fill(x, y):
 BLOCKFALL = pygame.USEREVENT + 1
 pygame.time.set_timer(BLOCKFALL, timer)
 
+#erzeuge Spielfeld
+board = Board()
 #block = Block(BLOCK_WIDTH, BLOCK_HEIGHT, rectangle_x)
 #block_2 = Block(BLOCK_WIDTH, BLOCK_HEIGHT, rectangle2_x)
-duo = Duo()
-#block_group = pygame.sprite.Group()
-#block_group.add(block)
-duo_group = []
-duo_group.append(duo)
+duo = Duo(board)
 
 #While-Schlaufe - machen bis running = False
 while running:
@@ -319,7 +307,7 @@ while running:
                 running = False
 
     has_active_block = False
-    for duo in duo_group:
+    for duo in board.duos:
         for event in events:
             if duo.is_falling():
                 if event.type == KEYDOWN:
@@ -340,13 +328,13 @@ while running:
     #fill(Block.rect.x, Block.rect.y)
 
     if not has_active_block:
-        board = Board()
         if board.lost():
             running = False 
             print('Du hast leider verloren')
         else:
-            duo = Duo()
-            duo_group.append(duo)
+            #bei aktuellem Block schauen, ob er mind. 2 gleiche Nachbaren hat
+            #liste mit allen betroffenen Blöcken zurückgeben (wenn liste länger als 3)
+            duo = Duo(board)
     
         '''for field in board[0]:
             if field == False:
@@ -361,12 +349,11 @@ while running:
     #Zeichne ein Rechteck oben in die Mitte
     #pygame.draw.rect(screen, (255, 0, 0), [rectangle_x, rectangle_y, BLOCK_WIDTH, BLOCK_HEIGHT])
 
-    for duo in duo_group:
+    for duo in board.duos:
         for block in duo:
             screen.blit(block.image, block.rect)
             #if board[block.list_y][block.list_x] == False:
             #board[block.list_y][block.list_x] = block 
-            block.board.register(block)
             '''for row in board:
                     print(row)
                 print(' ')'''
