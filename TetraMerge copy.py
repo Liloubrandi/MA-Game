@@ -247,7 +247,6 @@ class Block(pygame.sprite.Sprite):
             if self.board.get_block(self.list_x - 1, self.list_y) is None:
                 return True
         return False
-               
     
     @property #macht, dass die Methode eine Eigenschaft ist, welche ohne Klammern (list_x anstatt list_x()) angesprochen werden kann
     def list_x(self):
@@ -257,21 +256,39 @@ class Block(pygame.sprite.Sprite):
     def list_y(self):
         return self.rect.y // BLOCK_HEIGHT     
 
-'''def mergen(x, y, number):
+'''def merge_list(block, number):
     #Rahmenbedingungen
-    if x < 0 or x > DISPLAY_WIDTH - BLOCK_WIDTH:
+    if x < 0 or x > BLOCKS_HORIZONTAL - 1:
         return False
-    if y < 0 or y > DISPLAY_LENGTH - BLOCK_HEIGHT:
+    if y < 0 or y > BLOCKS_VERTICAL - 1:
         return False
     #Feld überprüfen
-    if board[y // BLOCK_HEIGHT][x // BLOCK_WIDTH].number == number:
+    if block.number == number:
         board[y // BLOCK_HEIGHT][x // BLOCK_WIDTH]  = False
         mergen(Block.rect.x, Block.rect.y + BLOCK_HEIGHT, Block.number) #unten
         mergen(Block.rect.x, Block.rect.y - BLOCK_HEIGHT, Block.number) #oben
         mergen(Block.rect.x + BLOCK_WIDTH, Block.rect.y, Block.number) #recht
-        mergen(Block.rect.x - BLOCK_WIDTH, Block.rect.y, Block.number) #links
+        mergen(Block.rect.x - BLOCK_WIDTH, Block.rect.y, Block.number) #links'''
+
+def merge_list(block, number):
+        merge_list = []
+        #Rahmenbedingungen
+        if block.list_x < 0 or block.list_x > BLOCKS_HORIZONTAL - 1:
+            return False
+        if block.list_y < 0 or block.list_y > BLOCKS_VERTICAL - 1:
+            return False
+        #Feld überprüfen
+        #block = block.board.get_block(block.list_x, block.list_y) 
+        if block is not None:
+            if block.number == number:
+                merge_list.append(block)
+                merge_list(block = block.board.get_block(block.list_x + 1, block.list_y), number) #rechts
+                merge_list(block = block.board.get_block(block.list_x - 1, block.list_y ), number) #links
+                merge_list(block = block.board.get_block(block.list_x, block.list_y + 1), number) #unten
+                merge_list(block = block.board.get_block(block.list_x, block.list_y - 1), number) #oben
+        return merge_list
         
-def fill(x, y):
+'''def fill(x, y):
     board[x][y].number = board[x][y].number + 1
     if board[x][y].number == 6:
         board[x][y] == False
@@ -310,6 +327,9 @@ while running:
     for duo in board.duos:
         for event in events:
             if duo.is_falling():
+                for block in duo:
+                    current_block = block
+                    current_number = block.number
                 if event.type == KEYDOWN:
                     if event.key == K_RIGHT:
                         if duo.is_right_free():
@@ -333,7 +353,8 @@ while running:
             print('Du hast leider verloren')
         else:
             #bei aktuellem Block schauen, ob er mind. 2 gleiche Nachbaren hat
-            #liste mit allen betroffenen Blöcken zurückgeben (wenn liste länger als 3)
+            #liste mit allen betroffenen Blöcken zurückgeben (wenn liste länger als 3, dann mergen)
+            merge_list = merge_list(current_block, current_number)
             duo = Duo(board)
     
         '''for field in board[0]:
