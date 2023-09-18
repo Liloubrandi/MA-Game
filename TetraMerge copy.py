@@ -271,22 +271,22 @@ class Block(pygame.sprite.Sprite):
         mergen(Block.rect.x - BLOCK_WIDTH, Block.rect.y, Block.number) #links'''
 
 def merge_list(block, number):
-        merge_list = []
+        merge_list_blocks = []
+        if block is not None:
         #Rahmenbedingungen
-        if block.list_x < 0 or block.list_x > BLOCKS_HORIZONTAL - 1:
-            return False
-        if block.list_y < 0 or block.list_y > BLOCKS_VERTICAL - 1:
-            return False
+            if block.list_x < 0 or block.list_x > BLOCKS_HORIZONTAL - 1:
+                return False
+            if block.list_y < 0 or block.list_y > BLOCKS_VERTICAL - 1:
+                return False
         #Feld überprüfen
         #block = block.board.get_block(block.list_x, block.list_y) 
-        if block is not None:
             if block.number == number:
-                merge_list.append(block)
-                merge_list(block = block.board.get_block(block.list_x + 1, block.list_y), number) #rechts
-                merge_list(block = block.board.get_block(block.list_x - 1, block.list_y ), number) #links
-                merge_list(block = block.board.get_block(block.list_x, block.list_y + 1), number) #unten
-                merge_list(block = block.board.get_block(block.list_x, block.list_y - 1), number) #oben
-        return merge_list
+                merge_list_blocks.append(block)
+                merge_list(block.board.get_block(block.list_x + 1, block.list_y), number) #rechts
+                merge_list(block.board.get_block(block.list_x - 1, block.list_y ), number) #links
+                merge_list(block.board.get_block(block.list_x, block.list_y + 1), number) #unten
+                merge_list(block.board.get_block(block.list_x, block.list_y - 1), number) #oben
+            return merge_list
         
 '''def fill(x, y):
     board[x][y].number = board[x][y].number + 1
@@ -354,7 +354,7 @@ while running:
         else:
             #bei aktuellem Block schauen, ob er mind. 2 gleiche Nachbaren hat
             #liste mit allen betroffenen Blöcken zurückgeben (wenn liste länger als 3, dann mergen)
-            merge_list = merge_list(current_block, current_number)
+            blocks_to_merge = merge_list(current_block, current_number)
             duo = Duo(board)
     
         '''for field in board[0]:
