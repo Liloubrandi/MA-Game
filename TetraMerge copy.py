@@ -17,6 +17,7 @@ from pygame.locals import (
 
 #initialize
 pygame.init()
+pygame.font.init()
 
 YELLOW = (255, 255, 0)
 RED = (204, 0, 0)
@@ -40,6 +41,9 @@ rectangle_y = 0
 rectangle_x = 0 + 4 * BLOCK_WIDTH
 rectangle2_x = 0 + 5 * BLOCK_WIDTH
 timer = 500
+score = 0
+score_increasement = 10
+font = pygame.font.Font(None, 50)
 
 class Board():
     def __init__(self):
@@ -379,6 +383,7 @@ while running:
                 block.remove()
             fill(current_block, board)
             duo = Duo(board)
+            score = score + score_increasement
     
         '''for field in board[0]:
             if field == False:
@@ -401,6 +406,10 @@ while running:
             '''for row in board:
                     print(row)
                 print(' ')'''
+
+    #Blit the score on the screen
+    show_score = font.render(f'Score: {score}', True, (0, 0, 0))
+    screen.blit(show_score, (10, 10))
 
     #block_group.draw(screen)
     #Flip the display - aktualisieren
