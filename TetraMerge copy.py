@@ -72,8 +72,8 @@ class Duo(pygame.sprite.Group):
     def __init__(self, board):
         super().__init__()
         self.board : Board = board
-        block = Block(BLOCK_WIDTH, BLOCK_HEIGHT, rectangle_x, board)
-        block_2 = Block(BLOCK_WIDTH, BLOCK_HEIGHT, rectangle2_x, board)
+        block = Block(BLOCK_WIDTH, BLOCK_HEIGHT, rectangle_x, board, self)
+        block_2 = Block(BLOCK_WIDTH, BLOCK_HEIGHT, rectangle2_x, board, self)
         self.add(block)
         self.add(block_2)
         self.rotation = 'horizontal_right'
@@ -82,6 +82,9 @@ class Duo(pygame.sprite.Group):
     @property
     def blocks(self):
         return self.sprites()
+    
+    def remove_block(self, block):
+        self.remove(block)
 
     def move_down(self):
         for block in self.blocks:
@@ -194,7 +197,7 @@ class Duo(pygame.sprite.Group):
                 self.rotation = 'horizontal_right'
 
 class Block(pygame.sprite.Sprite):
-    def __init__(self, width, height, pos_x, board):
+    def __init__(self, width, height, pos_x, board, duo):
         super().__init__()
         self.board = board
         self.number = random.randint(1, 6)
@@ -203,6 +206,7 @@ class Block(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = pos_x
         self.rect.y = 0
+        self.duo = duo
     
     @property
     def color(self):
@@ -218,6 +222,9 @@ class Block(pygame.sprite.Sprite):
             return BLUE
         if self.number == 6:
             return GREEN
+        
+    def remove(self):
+        self.duo.remove_block(self)
 
     def move(self, direction):
         if direction == 'down':
@@ -286,7 +293,7 @@ def merge_list(block, number):
                 merge_list(block.board.get_block(block.list_x - 1, block.list_y ), number) #links
                 merge_list(block.board.get_block(block.list_x, block.list_y + 1), number) #unten
                 merge_list(block.board.get_block(block.list_x, block.list_y - 1), number) #oben
-            return merge_list
+        return merge_list
         
 '''def fill(x, y):
     board[x][y].number = board[x][y].number + 1
@@ -355,6 +362,8 @@ while running:
             #bei aktuellem Block schauen, ob er mind. 2 gleiche Nachbaren hat
             #liste mit allen betroffenen Blöcken zurückgeben (wenn liste länger als 3, dann mergen)
             blocks_to_merge = merge_list(current_block, current_number)
+            for block in blocks_to_merge:
+                block.remove()
             duo = Duo(board)
     
         '''for field in board[0]:
