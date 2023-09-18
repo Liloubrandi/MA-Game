@@ -288,12 +288,25 @@ def merge_list(block, number):
         #Feld überprüfen
         #block = block.board.get_block(block.list_x, block.list_y) 
             if block.number == number:
-                merge_list_blocks.append(block)
+                merge_list_blocks.append(block) #Hier wird der aktuelle Block auch gespeichert, das sollte aber nicht sein, da dieser eigentliche bleiben müsste
                 merge_list(block.board.get_block(block.list_x + 1, block.list_y), number) #rechts
                 merge_list(block.board.get_block(block.list_x - 1, block.list_y ), number) #links
                 merge_list(block.board.get_block(block.list_x, block.list_y + 1), number) #unten
                 merge_list(block.board.get_block(block.list_x, block.list_y - 1), number) #oben
         return merge_list
+
+def fill(block, board):
+    block.number = block.number + 1
+    if block.number == 6:
+        block.remove()
+    for y in range(BLOCKS_VERTICAL - 1, 0, -1):
+        for x in range(BLOCKS_HORIZONTAL - 1):
+            if board.get_block(x, y) is None:
+                row_index = y
+                while row_index > 0 and board.get_block(x, row_index) is None:
+                    row_index = row_index + 1
+                board.get_block(x, row_index).rect.y = y * BLOCK_HEIGHT
+    
         
 '''def fill(x, y):
     board[x][y].number = board[x][y].number + 1
@@ -364,6 +377,7 @@ while running:
             blocks_to_merge = merge_list(current_block, current_number)
             for block in blocks_to_merge:
                 block.remove()
+            fill(current_block, board)
             duo = Duo(board)
     
         '''for field in board[0]:
