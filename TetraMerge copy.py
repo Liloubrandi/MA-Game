@@ -286,7 +286,7 @@ class Block(pygame.sprite.Sprite):
         return self.rect.y // BLOCK_HEIGHT     
 
 def merge_list(mergelist, block, number):
-        if block is not None:
+        if block is not None and block.visited == False:
         #Rahmenbedingungen
             if block.list_x < 0 or block.list_x > BLOCKS_HORIZONTAL - 1:
                 return mergelist
@@ -295,37 +295,12 @@ def merge_list(mergelist, block, number):
         #Feld überprüfen
             if block.number == number:
                 mergelist.append(block) 
+                block.visited = True
                 merge_list(mergelist, block.board.get_block(block.list_x + 1, block.list_y), number) #rechts
                 merge_list(mergelist, block.board.get_block(block.list_x - 1, block.list_y ), number) #links
                 merge_list(mergelist, block.board.get_block(block.list_x, block.list_y + 1), number) #unten
                 merge_list(mergelist, block.board.get_block(block.list_x, block.list_y - 1), number) #oben
         return mergelist
-
-'''def fill(block, board):
-    block.number = block.number + 1
-    if block.number == 6:
-        block.remove()
-    for y in range(BLOCKS_VERTICAL - 1, 0, -1):
-        for x in range(BLOCKS_HORIZONTAL - 1):
-            if board.get_block(x, y) is None:
-                row_index = y
-                while row_index > 0 and board.get_block(x, row_index) is None:
-                    row_index = row_index + 1
-                board.get_block(x, row_index).rect.y = y * BLOCK_HEIGHT'''
-    
-        
-'''def fill(x, y):
-    board[x][y].number = board[x][y].number + 1
-    if board[x][y].number == 6:
-        board[x][y] == False
-    for row in range(DISPLAY_LENGTH // BLOCK_HEIGHT, 0, -1):
-        for field in range(DISPLAY_LENGTH // BLOCK_HEIGHT, 0, -1):
-            if board[row][field] == False:
-                row_index = row 
-                while row_index > 0 and board[row_index][field] == 0:
-                    row_index = row_index - 1
-                board[row][field] = board[row_index][field]
-                board[row_index][field] = False'''
 
 #Kreiere ein eigenes Event, welches jede Sekunde ausgeführt wird -> um den Block nach unten zu bewegen
 BLOCKFALL = pygame.USEREVENT + 1
