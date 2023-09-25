@@ -136,49 +136,61 @@ class Duo(pygame.sprite.Group):
         #Voraussetzung: Es hat genau zwei Blöcke
         #Wenn beide die gleichen y-Koordinaten haben -> waagerecht
         #Wenn beide andere y-Koordinaten haben -> senkrecht
-        if self.blocks[0].rect.y == self.blocks[1].rect.y:
-            return self.blocks
-        else:
-            if self.blocks[0].rect.y > self.blocks[1].rect.y:
-                return [self.blocks[0]] #Wieso braucht es hier diese Listenklammern?
+        if len(self.blocks) == 2:
+            if self.blocks[0].rect.y == self.blocks[1].rect.y:
+                return self.blocks
             else:
-                return [self.blocks[1]]
+                if self.blocks[0].rect.y > self.blocks[1].rect.y:
+                    return [self.blocks[0]] #Wieso braucht es hier diese Listenklammern?
+                else:
+                    return [self.blocks[1]]
+        else:
+            return self.blocks
             
     @property
     def highest_block(self):
-        if self.blocks[0].rect.y == self.blocks[1].rect.y:
-            return self.blocks
-        else:
-            if self.blocks[0].rect.y > self.blocks[1].rect.y:
-                return [self.blocks[1]]
+        if len(self.blocks) == 2:
+            if self.blocks[0].rect.y == self.blocks[1].rect.y: 
+                return self.blocks
             else:
-                return [self.blocks[1]]
-            
+                if self.blocks[0].rect.y > self.blocks[1].rect.y:
+                    return [self.blocks[1]]
+                else:
+                    return [self.blocks[1]]
+        else:
+            return self.blocks
+
     @property
     def right_block(self):
         #Voraussetzung: Es hat genau zwei Blöcke
         #Wenn beide die gleichen x-Koordinaten haben -> senkrecht
         #Wenn beide andere x-Koordinaten haben -> waagerecht
-        if self.blocks[0].rect.x == self.blocks[1].rect.x:
-            return self.blocks
-        else:
-            if self.blocks[0].rect.x > self.blocks[1].rect.x:
-                return [self.blocks[0]]
+        if len(self.blocks) == 2:
+            if self.blocks[0].rect.x == self.blocks[1].rect.x:
+                return self.blocks
             else:
-                return [self.blocks[1]]
+                if self.blocks[0].rect.x > self.blocks[1].rect.x:
+                    return [self.blocks[0]]
+                else:
+                    return [self.blocks[1]]
+        else:
+            return self.blocks
     
     @property
     def left_block(self):
         #Voraussetzung: Es hat genau zwei Blöcke
         #Wenn beide die gleichen x-Koordinaten haben -> senkrecht
         #Wenn beide andere x-Koordinaten haben -> waagerecht
-        if self.blocks[0].rect.x == self.blocks[1].rect.x:
-            return self.blocks
-        else:
-            if self.blocks[0].rect.x > self.blocks[1].rect.x:
-                return [self.blocks[1]]
+        if len(self.blocks) == 2:
+            if self.blocks[0].rect.x == self.blocks[1].rect.x:
+                return self.blocks
             else:
-                return [self.blocks[0]]
+                if self.blocks[0].rect.x > self.blocks[1].rect.x:
+                    return [self.blocks[1]]
+                else:
+                    return [self.blocks[0]]
+        else:
+            return self.blocks
 
     def is_falling(self):
         if len(self.blocks) == 0:
@@ -324,6 +336,7 @@ while running:
     for duo in board.duos:
         for event in events:
             if duo.is_falling():
+                falling_duos = board.falling_duos
                 if event.type == KEYDOWN:
                     if event.key == K_RIGHT:
                         if duo.is_right_free():
@@ -345,10 +358,10 @@ while running:
         else:
             #bei aktuellem Block schauen, ob er gleiche Nachbaren hat
             #liste mit allen betroffenen Blöcken zurückgeben (wenn liste länger als 3, dann mergen)
-            for falling_duo in board.falling_duos:
+            for falling_duo in falling_duos: 
                 for block in falling_duo:
-                    board.reset_blocks()
                     blocks_to_merge = board.merge_list([], block, block.number)
+                    board.reset_blocks()
                     if len(blocks_to_merge) > 0:
                         current_block = blocks_to_merge.pop(0)
                     if len(blocks_to_merge) > 1:
