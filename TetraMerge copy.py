@@ -60,11 +60,23 @@ class Board():
             for block in duo.blocks:
                 block_list.append(block)
         return block_list
+    
+    def reset_blocks(self):
+        for block in self.block_list:
+            block.reset()
 
     def get_block(self, x, y):
         for block in self.block_list:
             if block.list_x == x and block.list_y == y:
                 return block
+    
+    @property
+    def falling_duos(self):
+        falling_duos = []
+        for duo in self.duos:
+            if duo.is_falling():
+                falling_duos.append(duo)
+        return falling_duos
 
     def lost(self):
         for duo in self.duos:
@@ -152,6 +164,8 @@ class Duo(pygame.sprite.Group):
                 return [self.blocks[0]]
 
     def is_falling(self):
+        if len(self.blocks) == 0:
+            return False
         is_falling = True
         for block in self.lowest_block:
             if is_falling and not block.falling():
@@ -204,9 +218,10 @@ class Block(pygame.sprite.Sprite):
     def __init__(self, width, height, pos_x, board, duo):
         super().__init__()
         self.board = board
+        self.visited = False
         self.number = random.randint(1, 6)
         self.image = pygame.Surface((width, height))
-        self.image.fill(self.color)
+        self.image.fill(self.color) 
         self.rect = self.image.get_rect()
         self.rect.x = pos_x
         self.rect.y = 0
@@ -229,6 +244,9 @@ class Block(pygame.sprite.Sprite):
         
     def remove(self):
         self.duo.remove_block(self)
+
+    def reset(self):
+        self.visited = False
 
     def move(self, direction):
         if direction == 'down':
@@ -267,39 +285,23 @@ class Block(pygame.sprite.Sprite):
     def list_y(self):
         return self.rect.y // BLOCK_HEIGHT     
 
-'''def merge_list(block, number):
-    #Rahmenbedingungen
-    if x < 0 or x > BLOCKS_HORIZONTAL - 1:
-        return False
-    if y < 0 or y > BLOCKS_VERTICAL - 1:
-        return False
-    #Feld überprüfen
-    if block.number == number:
-        board[y // BLOCK_HEIGHT][x // BLOCK_WIDTH]  = False
-        mergen(Block.rect.x, Block.rect.y + BLOCK_HEIGHT, Block.number) #unten
-        mergen(Block.rect.x, Block.rect.y - BLOCK_HEIGHT, Block.number) #oben
-        mergen(Block.rect.x + BLOCK_WIDTH, Block.rect.y, Block.number) #recht
-        mergen(Block.rect.x - BLOCK_WIDTH, Block.rect.y, Block.number) #links'''
-
-def merge_list(block, number):
-        merge_list_blocks = []
+def merge_list(mergelist, block, number):
         if block is not None:
         #Rahmenbedingungen
             if block.list_x < 0 or block.list_x > BLOCKS_HORIZONTAL - 1:
-                return False
+                return mergelist
             if block.list_y < 0 or block.list_y > BLOCKS_VERTICAL - 1:
-                return False
+                return mergelist
         #Feld überprüfen
-        #block = block.board.get_block(block.list_x, block.list_y) 
             if block.number == number:
-                merge_list_blocks.append(block) #Hier wird der aktuelle Block auch gespeichert, das sollte aber nicht sein, da dieser eigentliche bleiben müsste
-                merge_list(block.board.get_block(block.list_x + 1, block.list_y), number) #rechts
-                merge_list(block.board.get_block(block.list_x - 1, block.list_y ), number) #links
-                merge_list(block.board.get_block(block.list_x, block.list_y + 1), number) #unten
-                merge_list(block.board.get_block(block.list_x, block.list_y - 1), number) #oben
-        return merge_list
+                mergelist.append(block) 
+                merge_list(mergelist, block.board.get_block(block.list_x + 1, block.list_y), number) #rechts
+                merge_list(mergelist, block.board.get_block(block.list_x - 1, block.list_y ), number) #links
+                merge_list(mergelist, block.board.get_block(block.list_x, block.list_y + 1), number) #unten
+                merge_list(mergelist, block.board.get_block(block.list_x, block.list_y - 1), number) #oben
+        return mergelist
 
-def fill(block, board):
+'''def fill(block, board):
     block.number = block.number + 1
     if block.number == 6:
         block.remove()
@@ -309,7 +311,7 @@ def fill(block, board):
                 row_index = y
                 while row_index > 0 and board.get_block(x, row_index) is None:
                     row_index = row_index + 1
-                board.get_block(x, row_index).rect.y = y * BLOCK_HEIGHT
+                board.get_block(x, row_index).rect.y = y * BLOCK_HEIGHT'''
     
         
 '''def fill(x, y):
@@ -351,9 +353,6 @@ while running:
     for duo in board.duos:
         for event in events:
             if duo.is_falling():
-                for block in duo:
-                    current_block = block
-                    current_number = block.number
                 if event.type == KEYDOWN:
                     if event.key == K_RIGHT:
                         if duo.is_right_free():
@@ -376,12 +375,18 @@ while running:
             running = False 
             print('Du hast leider verloren')
         else:
-            #bei aktuellem Block schauen, ob er mind. 2 gleiche Nachbaren hat
+            #bei aktuellem Block schauen, ob er gleiche Nachbaren hat
             #liste mit allen betroffenen Blöcken zurückgeben (wenn liste länger als 3, dann mergen)
-            blocks_to_merge = merge_list(current_block, current_number)
-            for block in blocks_to_merge:
-                block.remove()
-            fill(current_block, board)
+            for falling_duo in board.falling_duos:
+                for block in falling_duo:
+                    board.reset_blocks()
+                    blocks_to_merge = merge_list([], block, block.number)
+                    if len(blocks_to_merge) > 0:
+                        current_block = blocks_to_merge.pop(0)
+                    if len(blocks_to_merge) > 1:
+                        for block in blocks_to_merge:
+                            block.remove()
+                        current_block.number = current_block.number + 1
             duo = Duo(board)
             score = score + score_increasement
     
