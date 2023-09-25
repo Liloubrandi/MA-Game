@@ -77,6 +77,23 @@ class Board():
             if duo.is_falling():
                 falling_duos.append(duo)
         return falling_duos
+    
+    def merge_list(self, mergelist, block, number):
+        if block is not None and block.visited == False:
+        #Rahmenbedingungen
+            if block.list_x < 0 or block.list_x > BLOCKS_HORIZONTAL - 1:
+                return mergelist
+            if block.list_y < 0 or block.list_y > BLOCKS_VERTICAL - 1:
+                return mergelist
+        #Feld überprüfen
+            if block.number == number:
+                mergelist.append(block) 
+                block.visited = True
+                self.merge_list(mergelist, block.board.get_block(block.list_x + 1, block.list_y), number) #rechts
+                self.merge_list(mergelist, block.board.get_block(block.list_x - 1, block.list_y ), number) #links
+                self.merge_list(mergelist, block.board.get_block(block.list_x, block.list_y + 1), number) #unten
+                self.merge_list(mergelist, block.board.get_block(block.list_x, block.list_y - 1), number) #oben
+        return mergelist
 
     def lost(self):
         for duo in self.duos:
@@ -285,23 +302,6 @@ class Block(pygame.sprite.Sprite):
     def list_y(self):
         return self.rect.y // BLOCK_HEIGHT     
 
-def merge_list(mergelist, block, number):
-        if block is not None and block.visited == False:
-        #Rahmenbedingungen
-            if block.list_x < 0 or block.list_x > BLOCKS_HORIZONTAL - 1:
-                return mergelist
-            if block.list_y < 0 or block.list_y > BLOCKS_VERTICAL - 1:
-                return mergelist
-        #Feld überprüfen
-            if block.number == number:
-                mergelist.append(block) 
-                block.visited = True
-                merge_list(mergelist, block.board.get_block(block.list_x + 1, block.list_y), number) #rechts
-                merge_list(mergelist, block.board.get_block(block.list_x - 1, block.list_y ), number) #links
-                merge_list(mergelist, block.board.get_block(block.list_x, block.list_y + 1), number) #unten
-                merge_list(mergelist, block.board.get_block(block.list_x, block.list_y - 1), number) #oben
-        return mergelist
-
 #Kreiere ein eigenes Event, welches jede Sekunde ausgeführt wird -> um den Block nach unten zu bewegen
 BLOCKFALL = pygame.USEREVENT + 1
 pygame.time.set_timer(BLOCKFALL, timer)
@@ -355,7 +355,7 @@ while running:
             for falling_duo in board.falling_duos:
                 for block in falling_duo:
                     board.reset_blocks()
-                    blocks_to_merge = merge_list([], block, block.number)
+                    blocks_to_merge = board.merge_list([], block, block.number)
                     if len(blocks_to_merge) > 0:
                         current_block = blocks_to_merge.pop(0)
                     if len(blocks_to_merge) > 1:
