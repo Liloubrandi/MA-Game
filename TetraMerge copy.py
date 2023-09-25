@@ -267,13 +267,10 @@ class Block(pygame.sprite.Sprite):
 
     def move(self, direction):
         if direction == 'down':
-            #board[self.list_y][self.list_x] = False
             self.rect.y = self.rect.y + BLOCK_HEIGHT
         if direction == 'right':
-            #board[self.list_y][self.list_x] = False
             self.rect.x = self.rect.x + BLOCK_WIDTH
         if direction == 'left':
-            #board[self.list_y][self.list_x] = False
             self.rect.x = self.rect.x - BLOCK_WIDTH
 
     def falling(self):
@@ -308,8 +305,7 @@ pygame.time.set_timer(BLOCKFALL, timer)
 
 #erzeuge Spielfeld
 board = Board()
-#block = Block(BLOCK_WIDTH, BLOCK_HEIGHT, rectangle_x)
-#block_2 = Block(BLOCK_WIDTH, BLOCK_HEIGHT, rectangle2_x)
+#erzeuge Duo
 duo = Duo(board)
 
 #While-Schlaufe - machen bis running = False
@@ -342,9 +338,6 @@ while running:
         if duo.is_falling():
             has_active_block = True
 
-    #mergen(Block.rect.x, Block.rect.y, Block.number)
-    #fill(Block.rect.x, Block.rect.y)
-
     if not has_active_block:
         if board.lost():
             running = False 
@@ -364,28 +357,14 @@ while running:
                         current_block.number = current_block.number + 1
             duo = Duo(board)
             score = score + score_increasement
-    
-        '''for field in board[0]:
-            if field == False:
-                duo = Duo()
-                duo_group.append(duo)
-            else:
-                running = False
-                print('Du hast leider verloren')'''
+
     #Hintergrund weiss machen
     screen.fill((255, 255, 255))
 
-    #Zeichne ein Rechteck oben in die Mitte
-    #pygame.draw.rect(screen, (255, 0, 0), [rectangle_x, rectangle_y, BLOCK_WIDTH, BLOCK_HEIGHT])
-
     for duo in board.duos:
+        #duo.draw() macht das gleiche wie due unteren zwei Zeilen
         for block in duo:
             screen.blit(block.image, block.rect)
-            #if board[block.list_y][block.list_x] == False:
-            #board[block.list_y][block.list_x] = block 
-            '''for row in board:
-                    print(row)
-                print(' ')'''
 
     #Blit the score on the screen
     show_score = font.render(f'Score: {score}', True, (0, 0, 0))
