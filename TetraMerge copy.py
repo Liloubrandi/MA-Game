@@ -360,13 +360,14 @@ while running:
             #liste mit allen betroffenen Blöcken zurückgeben (wenn liste länger als 3, dann mergen)
             for falling_duo in falling_duos: 
                 for block in falling_duo:
-                    blocks_to_merge = board.merge_list([], block, block.number)
                     board.reset_blocks()
+                    blocks_to_merge = board.merge_list([], block, block.number)
                     if len(blocks_to_merge) > 0:
                         current_block = blocks_to_merge.pop(0)
                     if len(blocks_to_merge) > 1:
                         for block in blocks_to_merge:
                             block.remove()
+                            score = score + score_increasement
                         current_block.number = current_block.number + 1
             duo = Duo(board)
             score = score + score_increasement
