@@ -249,27 +249,29 @@ class Block(pygame.sprite.Sprite):
         self.board = board
         self.visited = False
         self.number = random.randint(1, 6)
-        self.image = pygame.Surface((width, height))
-        self.image.fill(self.color) 
+        self.image = pygame.image.load(self.dice)
+        self.smaller_image = pygame.transform.scale(self.image, (width, height))
+        #self.image = pygame.Surface((width, height))
+        #self.image.fill(self.color) 
         self.rect = self.image.get_rect()
         self.rect.x = pos_x
         self.rect.y = 0
         self.duo = duo
     
     @property
-    def color(self):
+    def dice(self):
         if self.number == 1:
-            return YELLOW
+            return "TetraMerge-wuerfel_1.png"
         if self.number == 2:
-            return RED
+            return "TetraMerge-wuerfel_2.png"
         if self.number == 3:
-            return PINK
+            return "TetraMerge-wuerfel_3.png"
         if self.number == 4:
-            return PURPLE
+            return "TetraMerge-wuerfel_4.png"
         if self.number == 5:
-            return BLUE
+            return "TetraMerge-wuerfel_5.png"
         if self.number == 6:
-            return GREEN
+            return "TetraMerge-wuerfel_6.png"
         
     def remove(self):
         self.duo.remove_block(self)
@@ -358,9 +360,9 @@ while running:
         else:
             #bei aktuellem Block schauen, ob er gleiche Nachbaren hat
             #liste mit allen betroffenen Blöcken zurückgeben (wenn liste länger als 3, dann mergen)
+            board.reset_blocks()
             for falling_duo in falling_duos: 
                 for block in falling_duo:
-                    board.reset_blocks()
                     blocks_to_merge = board.merge_list([], block, block.number)
                     if len(blocks_to_merge) > 0:
                         current_block = blocks_to_merge.pop(0)
@@ -378,7 +380,7 @@ while running:
     for duo in board.duos:
         #duo.draw() macht das gleiche wie due unteren zwei Zeilen
         for block in duo:
-            screen.blit(block.image, block.rect)
+            screen.blit(block.smaller_image, block.rect)
 
     #Blit the score on the screen
     show_score = font.render(f'Score: {score}', True, (0, 0, 0))
