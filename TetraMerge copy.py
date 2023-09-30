@@ -105,8 +105,8 @@ class Duo(pygame.sprite.Group):
     def __init__(self, board):
         super().__init__()
         self.board : Board = board
-        block = Block(BLOCK_WIDTH, BLOCK_HEIGHT, rectangle_x, board, self)
-        block_2 = Block(BLOCK_WIDTH, BLOCK_HEIGHT, rectangle2_x, board, self)
+        block = Block(BLOCK_WIDTH, BLOCK_HEIGHT, rectangle_x, 0, board, self)
+        block_2 = Block(BLOCK_WIDTH, BLOCK_HEIGHT, rectangle2_x, 0, board, self)
         self.add(block)
         self.add(block_2)
         self.rotation = 'horizontal_right'
@@ -244,7 +244,7 @@ class Duo(pygame.sprite.Group):
                 self.rotation = 'horizontal_right'
 
 class Block(pygame.sprite.Sprite):
-    def __init__(self, width, height, pos_x, board, duo):
+    def __init__(self, width, height, pos_x, pos_y, board, duo):
         super().__init__()
         self.board = board
         self.visited = False
@@ -255,7 +255,7 @@ class Block(pygame.sprite.Sprite):
         #self.image.fill(self.color) 
         self.rect = self.image.get_rect()
         self.rect.x = pos_x
-        self.rect.y = 0
+        self.rect.y = pos_y
         self.duo = duo
     
     @property
@@ -278,6 +278,11 @@ class Block(pygame.sprite.Sprite):
 
     def reset(self):
         self.visited = False
+
+    def increase_number(self, ):
+        self.number = self.number + 1
+        self.__init__(BLOCK_WIDTH, BLOCK_HEIGHT, self.rect.x, self.rect.y, self.board, self.duo)
+
 
     def move(self, direction):
         if direction == 'down':
@@ -362,15 +367,17 @@ while running:
             #liste mit allen betroffenen Blöcken zurückgeben (wenn liste länger als 3, dann mergen)
             board.reset_blocks()
             for falling_duo in falling_duos: 
-                for block in falling_duo:
-                    blocks_to_merge = board.merge_list([], block, block.number)
-                    if len(blocks_to_merge) > 0:
-                        current_block = blocks_to_merge.pop(0)
-                    if len(blocks_to_merge) > 1:
-                        for block in blocks_to_merge:
-                            block.remove()
-                            score = score + score_increasement
-                        current_block.number = current_block.number + 1
+                if falling_duo is not None:
+                    for block in falling_duo:
+                        if block is not None:
+                            blocks_to_merge = board.merge_list([], block, block.number)
+                            if len(blocks_to_merge) > 0:
+                                current_block = blocks_to_merge.pop(0)
+                                if len(blocks_to_merge) > 1:
+                                    for block in blocks_to_merge:
+                                        block.remove()
+                                        score = score + score_increasement
+                                    current_block.increase_number()
             duo = Duo(board)
             score = score + score_increasement
 
