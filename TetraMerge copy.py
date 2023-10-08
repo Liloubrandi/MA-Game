@@ -281,8 +281,8 @@ class Block(pygame.sprite.Sprite):
 
     def increase_number(self, ):
         self.number = self.number + 1
-        self.__init__(BLOCK_WIDTH, BLOCK_HEIGHT, self.rect.x, self.rect.y, self.board, self.duo)
-
+        self.image = pygame.image.load(self.dice)
+        self.smaller_image = pygame.transform.scale(self.image, (BLOCK_WIDTH, BLOCK_HEIGHT))
 
     def move(self, direction):
         if direction == 'down':
@@ -377,7 +377,10 @@ while running:
                                     for block in blocks_to_merge:
                                         block.remove()
                                         score = score + score_increasement
-                                    current_block.increase_number()
+                                    if current_block.number == 6:
+                                        current_block.remove()
+                                    else:
+                                        current_block.increase_number()
             duo = Duo(board)
             score = score + score_increasement
 
