@@ -388,15 +388,15 @@ while running:
     screen.fill((255, 255, 255))
 
     for duo in board.duos:
-        #duo.draw() macht das gleiche wie due unteren zwei Zeilen
-        for block in duo:
-            screen.blit(block.smaller_image, block.rect)
+        duo.draw(screen)
+        #Auch möglich:
+        #for block in duo:
+            #screen.blit(block.smaller_image, block.rect)
 
     #Blit the score on the screen
     show_score = font.render(f'Score: {score}', True, (0, 0, 0))
     screen.blit(show_score, (10, 10))
 
-    #block_group.draw(screen)
     #Flip the display - aktualisieren
     pygame.display.flip()
 
