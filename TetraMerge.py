@@ -19,13 +19,6 @@ from pygame.locals import (
 pygame.init()
 pygame.font.init()
 
-YELLOW = (255, 255, 0)
-RED = (204, 0, 0)
-GREEN = (0, 204, 0)
-BLUE = (0, 0, 204)
-PURPLE = (102, 0, 204)
-PINK = (204, 0, 204)
-
 #Parameter für Bildschirm und Block und Bildschirmerstellung
 BLOCKS_VERTICAL = 14
 BLOCKS_HORIZONTAL = 10
@@ -326,6 +319,7 @@ pygame.time.set_timer(BLOCKFALL, timer)
 board = Board()
 #erzeuge Duo
 duo = Duo(board)
+merge = True
 
 #While-Schlaufe - machen bis running = False
 while running:
@@ -340,10 +334,10 @@ while running:
                 running = False
 
     has_active_block = False
+    falling_duos = board.falling_duos
     for duo in board.duos:
         for event in events:
             if duo.is_falling():
-                falling_duos = board.falling_duos
                 if event.type == KEYDOWN:
                     if event.key == K_RIGHT:
                         if duo.is_right_free():
@@ -366,10 +360,10 @@ while running:
             #bei aktuellem Block schauen, ob er gleiche Nachbaren hat
             #liste mit allen betroffenen Blöcken zurückgeben (wenn Liste länger als 3, dann mergen)
             board.reset_blocks()
-            #while board.falling_duos is not None:
+            #while len(falling_duos) is not 0:
             for falling_duo in falling_duos: 
                 if falling_duo is not None:
-                    for block in falling_duo:
+                    for block in falling_duos[0]:
                         if block is not None:
                             blocks_to_merge = board.merge_list([], block, block.number)
                             if len(blocks_to_merge) > 0:
@@ -385,7 +379,7 @@ while running:
             duo = Duo(board)
             score = score + score_increasement
 
-    #Hintergrund weiss machen
+        #Hintergrund weiss machen
     screen.fill((255, 255, 255))
 
     for duo in board.duos:
@@ -400,6 +394,7 @@ while running:
 
     #Flip the display - aktualisieren
     pygame.display.flip()
+
 
 #ganz am Ende
 pygame.quit()
