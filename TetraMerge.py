@@ -363,7 +363,7 @@ while running:
             #while len(falling_duos) is not 0:
             for falling_duo in falling_duos: 
                 if falling_duo is not None:
-                    for block in falling_duos[0]:
+                    for block in falling_duo:
                         if block is not None:
                             blocks_to_merge = board.merge_list([], block, block.number)
                             if len(blocks_to_merge) > 0:
@@ -376,8 +376,10 @@ while running:
                                         current_block.remove()
                                     else:
                                         current_block.increase_number()
-            duo = Duo(board)
-            score = score + score_increasement
+                                    has_active_block = True
+    if not has_active_block:
+        duo = Duo(board)
+        score = score + score_increasement
 
         #Hintergrund weiss machen
     screen.fill((255, 255, 255))
