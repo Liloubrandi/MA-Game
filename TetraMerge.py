@@ -348,7 +348,7 @@ while running:
                     if event.key == K_UP:
                         duo.rotate()
                 if event.type == BLOCKFALL:
-                        duo.move_down()
+                    duo.move_down()
         if duo.is_falling():
             has_active_block = True
 
